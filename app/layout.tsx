@@ -2,15 +2,23 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Pilates studio',
+  title: 'Solis Reformer Pilates — Banja Luka',
   description:
-    'Online studio koji stvara trajne, transformativne rezultate za vaše tijelo i um. Započnite besplatni probni period danas.',
+    'Reformer pilates studio u Banjoj Luci. Grupni, poluindividualni i individualni treninzi u malim grupama. Zatraži probni trening.',
+  openGraph: {
+    title: 'Solis Reformer Pilates — Banja Luka',
+    description:
+      'Reformer pilates studio u Banjoj Luci. Grupni, poluindividualni i individualni treninzi u malim grupama.',
+    locale: 'bs_BA',
+    type: 'website',
+    images: ['/images/solis-studio-panorama-1400.webp'],
+  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#f6f5f4',
+  themeColor: '#d4825b',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

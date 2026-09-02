@@ -1,150 +1,135 @@
 'use client';
 
 /* =============================================================================
-   PILATES STUDIO — jednofajlni klon layouta pilateswithharriet.com
+   SOLIS REFORMER PILATES — Banja Luka
    -----------------------------------------------------------------------------
-   ŠTA KLIJENT MIJENJA (sve je na jednom mjestu, odmah ispod):
-     1. STUDIO_NAME            -> pravi naziv studija
-     2. FOUNDER_NAME           -> ime instruktora / osnivača
-     3. INSTAGRAM_HANDLE       -> pravi handle
-     4. EMAIL_SUBMIT_ENDPOINT  -> pravi endpoint za newsletter / booking
-     5. IMAGE_PLACEHOLDER_1..16 -> prave slike (vidi <Ph /> komponentu)
-     6. Tekstove u konstantama LIST_ITEMS, FEATURES_*, TESTIMONIALS, CLASS_TYPES
+   Cijela stranica je u ovom fajlu: markup, stanje i sav CSS (konstanta CSS na dnu).
+   Bez eksternih zavisnosti osim Reacta.
 
-   Bez eksternih zavisnosti osim Reacta. Sav CSS je u konstanti CSS na dnu fajla.
+   ŠTA JOŠ TREBA DOPUNITI (traži se u konstanti KONTAKT i dolje u TESTIMONIALS):
+     - telefon, email, radno vrijeme
+     - LINK_APLIKACIJE (booking aplikacija studija)
+     - EMAIL_SUBMIT_ENDPOINT (gdje forma šalje podatke)
+     - bio instruktorice (ime, certifikati)
    ========================================================================== */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 /* ---------------------------------------------------------------- KONFIG -- */
 
-const STUDIO_NAME = '[STUDIO_NAZIV]';
-const STUDIO_TAGLINE = 'Poveži · Oblikuj · Ojačaj';
-const FOUNDER_NAME = '[IME_INSTRUKTORA]';
-const INSTAGRAM_HANDLE = '@[INSTAGRAM_HANDLE]';
+const STUDIO = 'Solis Reformer Pilates';
+const INSTAGRAM = 'solisreformerbl';
+const INSTAGRAM_URL = 'https://www.instagram.com/solisreformerbl';
+
+const KONTAKT = {
+  adresa: 'Vojvode Stepe Stepanovića 171F',
+  grad: 'Banja Luka, BiH',
+  telefon: '[TELEFON]',
+  email: '[EMAIL]',
+  radnoVrijeme: '[RADNO_VRIJEME]',
+};
+
+const LINK_APLIKACIJE = '[LINK_APLIKACIJE]';
 const EMAIL_SUBMIT_ENDPOINT = '[EMAIL_SUBMIT_ENDPOINT]';
 
-const NAV_LEFT = [
-  { label: 'O studiju', href: '#about' },
-  { label: 'Upoznaj ' + FOUNDER_NAME, href: '#meet' },
+const NAV = [
+  { label: 'Početna', href: '#pocetna' },
+  { label: 'O studiju', href: '#o-studiju' },
+  { label: 'Cjenovnik', href: '#cjenovnik' },
+  { label: 'Instruktorica', href: '#instruktorica' },
+  { label: 'Galerija', href: '#galerija' },
+  { label: 'Kontakt', href: '#kontakt' },
 ];
 
-const NAV_RIGHT = [
-  { label: 'Virtuelni studio', href: '#classes' },
-  { label: 'Časovi uživo', href: '#classes' },
+/* Šest razloga — preuzeto sa grafike studija „Zašto sam počela sa pilatesom” */
+const BENEFITI = [
+  { naslov: 'Vrijeme za sebe', tekst: 'Pedeset minuta u kojima si nedostupna svima osim sebi.' },
+  { naslov: 'Jače tijelo i veća fleksibilnost', tekst: 'Reformer radi sa tvojim tijelom, ne protiv njega — snaga dolazi bez udaraca po zglobovima.' },
+  { naslov: 'Manje stresa, više mira', tekst: 'Disanje i kontrolisan pokret spuštaju napetost koju nosiš iz dana.' },
+  { naslov: 'Osjećaj lakoće nakon svakog treninga', tekst: 'Izlaziš duža, uspravnija i mirnija nego što si ušla.' },
+  { naslov: 'Zajednica koja motiviše', tekst: 'Male grupe u kojima te instruktorica zna po imenu i prati tvoj napredak.' },
+  { naslov: 'Bolje držanje i manje napetosti', tekst: 'Rad na dubokim mišićima leđa i trbuha koji drže kičmu na okupu.' },
 ];
 
-const NAV_ALL = [
-  { label: 'Početna', href: '#top' },
-  { label: 'Započni probni period', href: '#booking' },
-  { label: 'O studiju', href: '#about' },
-  { label: 'Upoznaj ' + FOUNDER_NAME, href: '#meet' },
-  { label: 'Virtuelni studio', href: '#classes' },
-  { label: 'Časovi uživo', href: '#classes' },
-  { label: 'Galerija', href: '#gallery' },
-  { label: 'Kontakt', href: '#booking' },
-];
-
-const LIST_ITEMS = [
-  'Biblioteka časova na zahtjev',
-  'Mjesečni izazovi',
-  'Časovi uživo svakog mjeseca',
-  'Novi časovi svakog mjeseca',
-  '7 dana besplatno',
-];
-
-const FEATURES_LEFT = [
+const PAKETI = [
   {
-    title: 'Vježbajte bilo kada i bilo gdje',
-    text: 'Pilates možete raditi kad god i gdje god želite. Kao da vam je najbolji studio na dohvat ruke.',
+    id: 'grupni',
+    naziv: 'Grupni trening',
+    opis: 'Mala grupa, ista energija, najpristupačniji ulaz u reformer pilates.',
+    cijene: [
+      { naziv: 'Probni trening', cijena: '25 KM' },
+      { naziv: '8 termina', cijena: '150 KM', istaknuto: true },
+      { naziv: '12 termina', cijena: '200 KM' },
+    ],
   },
   {
-    title: 'Zabavni i efikasni pilates treninzi',
-    text: 'Časovi osmišljeni da grade snagu i povezanost, za najbolji odnos s vlastitim tijelom.',
-  },
-];
-
-const FEATURES_RIGHT = [
-  {
-    title: 'Novi pilates časovi svakog mjeseca',
-    text: 'Online studio s raznovrsnim pilates treninzima, da svaki dan možete probati novi trening i izgraditi dosljednu praksu u svojoj rutini.',
-  },
-  {
-    title: 'Mjesečni izazovi s nagradama',
-    text: 'Osmišljeni da podignu vašu praksu na viši nivo i pomognu vam da ostanete dosljedni sebi, uz novu nagradu svakog mjeseca kada ih završite.',
-  },
-];
-
-const TESTIMONIALS = [
-  {
-    quote:
-      'Časovi su mi najdraži dio dana. Smirena, pozitivna i ohrabrujuća energija čini da vrijeme proleti. Za samo tri mjeseca moja snaga i samopouzdanje su dramatično porasli.',
-    name: '[IME_KLIJENTA_1]',
+    id: 'poluindividualni',
+    naziv: 'Poluindividualni trening',
+    opis: 'Ti i još jedna osoba. Pažnja instruktorice skoro kao na individualnom.',
+    cijene: [
+      { naziv: 'Probni trening', cijena: '90 KM' },
+      { naziv: '8 termina', cijena: '550 KM', istaknuto: true },
+      { naziv: '12 termina', cijena: '750 KM' },
+    ],
   },
   {
-    quote:
-      'Nakon rođenja drugog djeteta, povratak trbušne snage činio mi se nezamislivim. Nakon više od godinu dana treninga ovdje, jača sam i u boljoj formi nego prije djece.',
-    name: '[IME_KLIJENTA_2]',
-  },
-  {
-    quote:
-      'Probala sam sve moguće treninge, od tegova do spinninga i trčanja, ali ništa mi nije dalo bolje rezultate ni više mira s vlastitim tijelom od ovih pilates časova.',
-    name: '[IME_KLIJENTA_3]',
-  },
-  {
-    quote:
-      'I sama sam personalna trenerica pa sam se oduvijek smatrala jakom, ali ovo je viši nivo. Moji treninzi snage su se enormno popravili otkako dolazim ovdje.',
-    name: '[IME_KLIJENTA_4]',
-  },
-  {
-    quote:
-      'Savršen spoj klasičnog i savremenog, a svaki čas je jedinstven uz poseban fokus na formu i poravnanje. Moja praksa se transformisala u posljednjih nekoliko mjeseci.',
-    name: '[IME_KLIJENTA_5]',
+    id: 'individualni',
+    naziv: 'Individualni trening',
+    opis: 'Trening skrojen samo za tebe — tempo, fokus i korekcije u svakom pokretu.',
+    cijene: [
+      { naziv: 'Probni trening', cijena: '50 KM' },
+      { naziv: '8 termina', cijena: '340 KM', istaknuto: true },
+      { naziv: '12 termina', cijena: '470 KM' },
+    ],
   },
 ];
 
-const CLASS_TYPES = [
-  {
-    id: 'tone',
-    title: 'Oblikovanje i tonus',
-    image: 6,
-    text: 'Osmišljeni da ojačaju, oblikuju i poravnaju tijelo. Uživajte u sporom gorenju pilatesa i otkrijte mišiće za koje niste ni znali da postoje. Pogodno za sve nivoe.',
-  },
-  {
-    id: 'stretch',
-    title: 'Oblikovanje i istezanje',
-    image: 7,
-    text: 'Tijelo radi u harmoniji kada nađemo pravu ravnotežu snage i fleksibilnosti. Ovi časovi su osmišljeni upravo za to.',
-  },
-  {
-    id: 'beginners',
-    title: 'Za početnike',
-    image: 8,
-    text: 'Savršeno mjesto za početak vašeg pilates puta. Osnovni časovi koji poboljšavaju držanje, snagu i fleksibilnost, uz poseban fokus na formu, disanje i tehniku.',
-  },
+/* NAPOMENA: prva dva utiska su javni komentari sa Instagram profila studija.
+   Prije objave sajta zatraži saglasnost autorki ili ih zamijeni novim. */
+const UTISCI = [
+  { tekst: 'Predivan prostor, instruktorka još bolja.', ime: 'Anđela V.', uloga: 'Članica' },
+  { tekst: 'Wooow, ovako nešto je trebalo da se desi u Banjoj Luci.', ime: 'Ljiljana S.', uloga: 'Članica' },
+  { tekst: '[UTISAK_ČLANICE — dopuni pravim citatom]', ime: '[IME]', uloga: '[npr. Članica 12 mjeseci]' },
 ];
 
-const GALLERY = [9, 10, 11, 12, 13, 14, 15, 16];
+/* Svih šest ide u isti format 4:5 — grid ostaje uredan, slike se kadriraju
+   preko object-fit: cover, a puni format se vidi u lightboxu. */
+const GALERIJA = [
+  { slika: 'solis-studio-panorama', alt: 'Sala sa reformer aparatima i lučnim ogledalima' },
+  { slika: 'solis-clanice-reformer', alt: 'Dvije članice na treningu u studiju' },
+  { slika: 'solis-render', alt: 'Prostor studija sa natpisom The best project you will ever work on is yourself' },
+  { slika: 'solis-balans', alt: 'Trening na reformeru pred ogledalima' },
+  { slika: 'solis-zajednica', alt: 'Tri članice studija' },
+  { slika: 'solis-reformer-detalj', alt: 'Detalj reformer aparata sa oprugama' },
+];
 
 /* ------------------------------------------------------ POMOĆNE KOMPONENTE */
 
-/**
- * Placeholder za sliku — klijent ga mijenja pravim <img> / next/image tagom.
- * Zadržava aspect-ratio originalne slike da layout ne skoči nakon zamjene.
- */
-function Ph({
-  n,
+/** Slika sa dvije rezolucije — browser bira manju na telefonu. */
+function Slika({
+  ime,
+  alt,
+  sizes = '100vw',
+  priority = false,
   className = '',
-  style,
 }: {
-  n: number;
+  ime: string;
+  alt: string;
+  sizes?: string;
+  priority?: boolean;
   className?: string;
-  style?: React.CSSProperties;
 }) {
   return (
-    <div className={'ph ' + className} style={style} role="img" aria-label={'Placeholder za sliku ' + n}>
-      <span>IMAGE_PLACEHOLDER_{n}</span>
-    </div>
+    <img
+      className={className}
+      src={'/images/' + ime + '-1400.webp'}
+      srcSet={'/images/' + ime + '-700.webp 700w, /images/' + ime + '-1400.webp 1400w'}
+      sizes={sizes}
+      alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+      draggable={false}
+    />
   );
 }
 
@@ -172,9 +157,9 @@ function useScrollReveal() {
   }, []);
 }
 
-function Arrow({ dir }: { dir: 'prev' | 'next' }) {
+function Chevron({ dir }: { dir: 'prev' | 'next' }) {
   return (
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.25" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
       {dir === 'prev' ? (
         <path d="M15 5 8 12l7 7" strokeLinecap="round" strokeLinejoin="round" />
       ) : (
@@ -184,449 +169,581 @@ function Arrow({ dir }: { dir: 'prev' | 'next' }) {
   );
 }
 
+function IkonaInstagram() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 /* --------------------------------------------------------------- STRANICA -- */
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [slide, setSlide] = useState(0);
-  const [activeClass, setActiveClass] = useState(CLASS_TYPES[0].id);
-  const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [utisak, setUtisak] = useState(0);
+  const [lightbox, setLightbox] = useState<number | null>(null);
+  const [poslato, setPoslato] = useState(false);
   const autoplay = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useScrollReveal();
 
-  /* Zaključaj scroll dok je burger meni otvoren */
+  /* Navigacija dobija podlogu čim se odskroluje sa hero sekcije */
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  /* Zaključaj scroll dok je otvoren meni ili lightbox */
+  useEffect(() => {
+    const zakljucano = menuOpen || lightbox !== null;
+    document.body.style.overflow = zakljucano ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
-  }, [menuOpen]);
+  }, [menuOpen, lightbox]);
 
-  /* Esc zatvara meni */
+  /* Esc zatvara sve, strelice listaju galeriju */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        setLightbox(null);
+      }
+      if (lightbox !== null) {
+        if (e.key === 'ArrowRight') setLightbox((i) => ((i ?? 0) + 1) % GALERIJA.length);
+        if (e.key === 'ArrowLeft') setLightbox((i) => ((i ?? 0) - 1 + GALERIJA.length) % GALERIJA.length);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [lightbox]);
 
-  /* Auto-rotacija testimonijala na 5 sekundi */
-  const startAutoplay = useCallback(() => {
+  /* Utisci se smjenjuju na 6 sekundi */
+  const pokreniAuto = useCallback(() => {
     if (autoplay.current) clearInterval(autoplay.current);
-    autoplay.current = setInterval(() => {
-      setSlide((s) => (s + 1) % TESTIMONIALS.length);
-    }, 5000);
+    autoplay.current = setInterval(() => setUtisak((u) => (u + 1) % UTISCI.length), 6000);
   }, []);
 
   useEffect(() => {
-    startAutoplay();
+    pokreniAuto();
     return () => {
       if (autoplay.current) clearInterval(autoplay.current);
     };
-  }, [startAutoplay]);
+  }, [pokreniAuto]);
 
-  const goTo = (i: number) => {
-    setSlide((i + TESTIMONIALS.length) % TESTIMONIALS.length);
-    startAutoplay();
+  const naUtisak = (i: number) => {
+    setUtisak((i + UTISCI.length) % UTISCI.length);
+    pokreniAuto();
   };
 
-  const onSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+  const posalji = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email) return;
-    /* TODO klijent: POST na EMAIL_SUBMIT_ENDPOINT */
-    setSent(true);
-    setEmail('');
-    window.setTimeout(() => setSent(false), 4000);
+    /* TODO: povezati sa EMAIL_SUBMIT_ENDPOINT (fetch POST) */
+    setPoslato(true);
+    e.currentTarget.reset();
+    window.setTimeout(() => setPoslato(false), 5000);
   };
-
-  const activeClassData = CLASS_TYPES.find((c) => c.id === activeClass) ?? CLASS_TYPES[0];
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
-      <span id="top" />
+      <span id="pocetna" />
 
-      {/* ============================================================ HEADER == */}
-      <header className="site-header">
-        <nav className="nav-items">
-          {NAV_LEFT.map((l) => (
-            <a key={l.label} href={l.href}>
-              {l.label}
-            </a>
-          ))}
-        </nav>
-        <div className="site-header__logo">
-          <a href="#top">
-            <span className="logo-word">{STUDIO_NAME}</span>
+      {/* ============================================================ NAV == */}
+      <header
+        className={
+          'nav' +
+          (scrolled ? ' nav--solid' : '') +
+          (menuOpen ? ' nav--na-meniju' : '') +
+          (lightbox !== null ? ' nav--sakrivena' : '')
+        }
+      >
+        <div className="nav__inner">
+          <a href="#pocetna" className="nav__logo" aria-label={STUDIO}>
+            <img src="/logo-solis-cream.svg" alt="" className="nav__logo-img nav__logo-img--cream" />
+            <img src="/logo-solis-dark.svg" alt="" className="nav__logo-img nav__logo-img--dark" />
           </a>
+
+          <nav className="nav__links">
+            {NAV.map((l) => (
+              <a key={l.href} href={l.href}>
+                {l.label}
+              </a>
+            ))}
+          </nav>
+
+          <a className="btn btn--pill nav__cta" href="#kontakt">
+            Zakaži probni
+          </a>
+
+          <button
+            type="button"
+            className={'burger' + (menuOpen ? ' is-open' : '')}
+            aria-label={menuOpen ? 'Zatvori meni' : 'Otvori meni'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
         </div>
-        <nav className="nav-items">
-          {NAV_RIGHT.map((l) => (
-            <a key={l.label} href={l.href}>
-              {l.label}
-            </a>
-          ))}
-        </nav>
       </header>
 
-      {/* ======================================================= BURGER MENU == */}
-      <button
-        type="button"
-        className={'burger-button' + (menuOpen ? ' active' : '')}
-        aria-label={menuOpen ? 'Zatvori meni' : 'Otvori meni'}
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen((o) => !o)}
-      >
-        <span className="burger-top" />
-        <span className="burger-middle" />
-        <span className="burger-bottom" />
-      </button>
-
-      <div className={'burger-menu' + (menuOpen ? ' active' : '')}>
-        <a href="#top" className="logo-burger" onClick={() => setMenuOpen(false)}>
-          <span className="logo-word">{STUDIO_NAME}</span>
-        </a>
-        {NAV_ALL.map((l) => (
-          <a key={l.label} href={l.href} className="menu-text" onClick={() => setMenuOpen(false)}>
+      <div className={'meni' + (menuOpen ? ' is-open' : '')}>
+        {NAV.map((l) => (
+          <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)}>
             {l.label}
           </a>
         ))}
+        <a className="btn btn--solid meni__cta" href="#kontakt" onClick={() => setMenuOpen(false)}>
+          Zakaži probni trening
+        </a>
       </div>
 
-      {/* Fiksni CTA dole desno — kao na originalu */}
-      <a className="btn-signup" href="#booking">
-        Započni probni period
-      </a>
-
       <main>
-        {/* ============================================================ HERO == */}
+        {/* =========================================================== HERO == */}
         <section className="hero">
-          <Ph n={1} className="hero__bg" />
-          <div className="hero__lockup" data-reveal>
-            <h1 className="hero__logo">{STUDIO_NAME}</h1>
-            <p className="hero__tagline">{STUDIO_TAGLINE}</p>
+          <div className="hero__media">
+            <Slika ime="solis-studio-panorama" alt="" priority sizes="100vw" className="hero__img" />
+            <div className="hero__veil" />
           </div>
-        </section>
 
-        {/* =============================================== STRENGTHEN / INTRO == */}
-        <section className="intro" id="about">
-          <div className="intro__inner" data-reveal>
-            <h2 className="serif-heading">
-              Ojačaj <span className="dot">•</span> Istegni <span className="dot">•</span>{' '}
-              <span className="font-italic">Transformiši</span>
-            </h2>
-            <p className="sans-heading intro__lead">
-              {STUDIO_NAME} stvara trajne, transformativne rezultate za vaše tijelo i um
+          <div className="hero__content">
+            <p className="kicker kicker--light" data-reveal>
+              Reformer pilates · Banja Luka
             </p>
-            <a href="#explore" className="btn">
-              Istraži
-            </a>
-          </div>
-        </section>
-
-        {/* ================================================ TRANSFORM (BLUE) == */}
-        <span id="explore" />
-        <section className="transform bg-blue">
-          <div className="container transform__grid">
-            <div className="transform__col transform__col--head" data-reveal>
-              <h2 className="serif-heading">
-                <span className="font-italic">Online</span> pilates studio koji{' '}
-                <span className="upper">transformiše</span> <span className="font-italic">vaše tijelo</span> i{' '}
-                <span className="font-italic">um</span>
-              </h2>
-              <a className="btn hide-mobile" href="#booking">
-                Započni probni period
+            <h1 className="display" data-reveal>
+              Pilates za <span className="italic">svako</span> tijelo
+            </h1>
+            <p className="hero__lead" data-reveal>
+              Transformacija počinje sa pedeset minuta samo za sebe.
+            </p>
+            <div className="hero__akcije" data-reveal>
+              <a className="btn btn--solid" href="#kontakt">
+                Zatraži probni trening
+              </a>
+              <a className="btn btn--ghost" href="#cjenovnik">
+                Pogledaj cjenovnik
               </a>
             </div>
+          </div>
 
-            <div className="transform__col transform__col--list" data-reveal>
-              <ul>
-                {LIST_ITEMS.map((item) => (
-                  <li key={item}>{item}</li>
+          <a href="#o-studiju" className="hero__scroll" aria-label="Nastavi na sadržaj">
+            <span />
+          </a>
+        </section>
+
+        {/* ====================================================== O STUDIJU == */}
+        <section className="zasto" id="o-studiju">
+          <div className="wrap">
+            <div className="zasto__uvod" data-reveal>
+              <p className="kicker">Zašto pilates</p>
+              <h2 className="naslov">
+                Više od vježbe — <span className="italic">to je transformacija</span>
+              </h2>
+              <p className="lead">
+                Reformer pilates gradi snagu kroz kontrolisan pokret, bez udaraca po zglobovima. Rezultat se ne vidi
+                samo u ogledalu — osjeti se u držanju, disanju i onome kako se nosiš kroz dan.
+              </p>
+            </div>
+
+            <div className="zasto__grid">
+              <figure className="zasto__grafika" data-reveal>
+                <Slika
+                  ime="solis-zasto-pilates"
+                  alt="Grafika studija: zašto sam počela sa pilatesom — šest razloga"
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                />
+              </figure>
+
+              <ol className="benefiti">
+                {BENEFITI.map((b, i) => (
+                  <li key={b.naslov} data-reveal>
+                    <span className="benefiti__broj">{String(i + 1).padStart(2, '0')}</span>
+                    <div>
+                      <h3>{b.naslov}</h3>
+                      <p>{b.tekst}</p>
+                    </div>
+                  </li>
                 ))}
-              </ul>
-              <a className="btn only-mobile" href="#booking">
-                Započni probni period
-              </a>
-            </div>
-
-            <div className="transform__col transform__col--img" data-reveal>
-              <Ph n={2} className="transform__img" />
+              </ol>
             </div>
           </div>
         </section>
 
-        {/* ============================================= ON DEMAND / FEATURES == */}
-        <section className="features">
-          <div className="container features__grid">
-            <div className="features__col" data-reveal>
-              {FEATURES_LEFT.map((f) => (
-                <div className="feature" key={f.title}>
-                  <h3 className="feature__title">{f.title}</h3>
-                  <p>{f.text}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="features__col features__col--media" data-reveal>
-              <Ph n={3} className="features__video" />
-              <a href="#classes" className="btn">
-                Istraži biblioteku
-              </a>
-            </div>
-
-            <div className="features__col" data-reveal>
-              {FEATURES_RIGHT.map((f) => (
-                <div className="feature" key={f.title}>
-                  <h3 className="feature__title">{f.title}</h3>
-                  <p>{f.text}</p>
-                </div>
-              ))}
-            </div>
+        {/* ========================================================== CITAT == */}
+        <section className="citat">
+          <div className="citat__media">
+            <Slika ime="solis-detalj-pampas" alt="" sizes="100vw" className="citat__img" />
           </div>
+          <blockquote className="citat__tekst" data-reveal>
+            <p>Status: nedostupna.</p>
+            <p>Lokacija: Solis Reformer Pilates.</p>
+            <p className="italic">Plan: ne diraj me narednih 50 minuta.</p>
+          </blockquote>
         </section>
 
-        {/* ==================================================== MEET FOUNDER == */}
-        <section className="meet bg-sand" id="meet">
-          <div className="container meet__grid">
-            <div className="meet__portrait" data-reveal>
-              <Ph n={4} className="aspect-portrait" />
-            </div>
-
-            <div className="meet__body">
-              <h2 className="sans-heading meet__title" data-reveal>
-                Upoznaj {FOUNDER_NAME}
+        {/* ====================================================== CJENOVNIK == */}
+        <section className="cjenovnik" id="cjenovnik">
+          <div className="wrap">
+            <div className="sekcija__zaglavlje" data-reveal>
+              <p className="kicker">Cjenovnik</p>
+              <h2 className="naslov">
+                Paket koji <span className="italic">odgovara tebi</span>
               </h2>
+            </div>
 
-              <div className="meet__text" data-reveal>
-                <div>
-                  <p>
-                    Ovaj studio sam razvila kao mjesto za bijeg od pritisaka svakodnevice i povratak svom najboljem ja
-                    — uz rezultate koji usput mijenjaju život.
-                    <br />
-                    <br />
-                    S godinama iskustva u podučavanju i preko 100 klijenata iza sebe, naučila sam šta je to što stvara
-                    veliku promjenu i trajne rezultate u tijelu.
-                  </p>
-                  <a href="#meet" className="btn meet__btn">
-                    Više o {FOUNDER_NAME}
+            <div className="paketi">
+              {PAKETI.map((p) => (
+                <article className="paket" key={p.id} data-reveal>
+                  <h3 className="paket__naziv">{p.naziv}</h3>
+                  <p className="paket__opis">{p.opis}</p>
+
+                  <ul className="paket__cijene">
+                    {p.cijene.map((c) => (
+                      <li key={c.naziv} className={c.istaknuto ? 'is-highlight' : undefined}>
+                        <span className="paket__stavka">
+                          {c.naziv}
+                          {c.istaknuto && <em className="paket__oznaka">najtraženije</em>}
+                        </span>
+                        <span className="paket__cijena">{c.cijena}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <a className="btn btn--solid paket__cta" href="#kontakt">
+                    Odaberi paket
                   </a>
+                </article>
+              ))}
+            </div>
+
+            <p className="cjenovnik__napomena" data-reveal>
+              Trening paketi vrijede 31 dan od datuma kupovine.
+            </p>
+          </div>
+        </section>
+
+        {/* =================================================== INSTRUKTORICA == */}
+        <section className="instruktorica" id="instruktorica">
+          <div className="wrap instruktorica__grid">
+            <div className="instruktorica__slike" data-reveal>
+              <figure className="instruktorica__glavna">
+                <Slika
+                  ime="solis-instruktorica"
+                  alt="Instruktorica studija Solis Reformer Pilates"
+                  sizes="(min-width: 1024px) 45vw, 100vw"
+                />
+              </figure>
+              <figure className="instruktorica__mala">
+                <Slika
+                  ime="solis-instruktorica-pocetnici"
+                  alt="Instruktorica u studiju — pilates je dostupan i početnicima"
+                  sizes="(min-width: 1024px) 20vw, 40vw"
+                />
+              </figure>
+            </div>
+
+            <div className="instruktorica__tekst" data-reveal>
+              <p className="kicker">Upoznaj instruktoricu</p>
+              <h2 className="naslov">
+                Neko ko te <span className="italic">zna po imenu</span>
+              </h2>
+              <p>
+                [BIO — dopuni: ime instruktorice, koliko dugo radi sa reformerom, gdje se školovala i šta je dovelo do
+                otvaranja Solisa u Banjoj Luci. Dvije do tri rečenice su dovoljne.]
+              </p>
+              <p>
+                Radim sa svim nivoima, a početnice su mi najdraže — prvi trening je uvijek sporiji, sa objašnjenjem
+                svakog pokreta i podešavanjem aparata prema tvom tijelu. Nikada nisi prepuštena sebi.
+              </p>
+
+              <dl className="instruktorica__fakta">
+                <div>
+                  <dt>Specijalizacija</dt>
+                  <dd>Reformer pilates</dd>
                 </div>
                 <div>
-                  <p>
-                    Moj pristup zdravlju je stvaranje nevjerovatnih, ali održivih rezultata koji vas ostavljaju
-                    osnaženim i na strunjači i van nje.
-                    <br />
-                    <br />
-                    Nikada me ne prestane fascinirati koliko su naša tijela zadivljujuća — uz pravi trening možete
-                    postići sve.
-                  </p>
+                  <dt>Certifikati</dt>
+                  <dd>[CERTIFIKATI]</dd>
                 </div>
-              </div>
+                <div>
+                  <dt>Radi sa</dt>
+                  <dd>Početnicama i naprednima</dd>
+                </div>
+              </dl>
 
-              <div className="meet__wide" data-reveal>
-                <Ph n={5} className="meet__wide-img" />
-              </div>
+              <a className="btn btn--outline" href="#kontakt">
+                Zakaži termin
+              </a>
             </div>
           </div>
         </section>
 
-        {/* ===================================================== TESTIMONIALS == */}
-        <section className="testimonials" id="testimonials">
-          <h2 className="sans-heading testimonials__title" data-reveal>
-            Utisci klijenata
-          </h2>
-
-          <div className="slider" data-reveal>
-            <button
-              type="button"
-              className="slider__arrow"
-              onClick={() => goTo(slide - 1)}
-              aria-label="Prethodni utisak"
-            >
-              <Arrow dir="prev" />
-            </button>
-
-            <div className="slider__viewport">
-              <div className="slider__track" style={{ transform: 'translateX(-' + slide * 100 + '%)' }}>
-                {TESTIMONIALS.map((t) => (
-                  <figure className="slider__item" key={t.name}>
-                    <blockquote className="slider__quote">&ldquo;{t.quote}&rdquo;</blockquote>
-                    <figcaption className="slider__name">{t.name}</figcaption>
-                  </figure>
-                ))}
-              </div>
+        {/* ======================================================= GALERIJA == */}
+        <section className="galerija" id="galerija">
+          <div className="wrap">
+            <div className="sekcija__zaglavlje" data-reveal>
+              <p className="kicker">Galerija</p>
+              <h2 className="naslov">
+                Naša <span className="italic">lokacija</span>
+              </h2>
+              <p className="lead">
+                Prostor u kojem se trenira mirno i bez gužve — lučna ogledala, topla rasvjeta i osam reformer aparata.
+              </p>
             </div>
 
-            <button
-              type="button"
-              className="slider__arrow"
-              onClick={() => goTo(slide + 1)}
-              aria-label="Sljedeći utisak"
-            >
-              <Arrow dir="next" />
-            </button>
-          </div>
-
-          <div className="slider__dots">
-            {TESTIMONIALS.map((t, i) => (
-              <button
-                type="button"
-                key={t.name}
-                className={'slider__dot' + (i === slide ? ' is-active' : '')}
-                onClick={() => goTo(i)}
-                aria-label={'Idi na utisak ' + (i + 1)}
-              />
-            ))}
-          </div>
-
-          <div>
-            <a href="#classes" className="btn">
-              Virtuelni studio
-            </a>
-          </div>
-        </section>
-
-        {/* ====================================================== CLASS TYPES == */}
-        <section className="classes bg-blue" id="classes">
-          <div className="container classes__grid">
-            <div className="classes__nav" data-reveal>
-              {CLASS_TYPES.map((c) => (
+            <div className="galerija__grid">
+              {GALERIJA.map((g, i) => (
                 <button
                   type="button"
-                  key={c.id}
-                  className={'sans-heading class-link' + (c.id === activeClass ? ' is-active' : '')}
-                  onMouseEnter={() => setActiveClass(c.id)}
-                  onFocus={() => setActiveClass(c.id)}
-                  onClick={() => setActiveClass(c.id)}
+                  key={g.slika}
+                  className="galerija__stavka"
+                  onClick={() => setLightbox(i)}
+                  aria-label={'Otvori sliku: ' + g.alt}
+                  data-reveal
                 >
-                  {c.title}
+                  <Slika ime={g.slika} alt={g.alt} sizes="(min-width: 768px) 33vw, 50vw" />
                 </button>
               ))}
             </div>
 
-            <div className="classes__content" data-reveal>
-              <Ph n={activeClassData.image} className="classes__media" />
-              <p>{activeClassData.text}</p>
-              <a href="#booking" className="btn">
-                Pogledaj raspored
-              </a>
+            <div className="uzivo" data-reveal>
+              <div className="uzivo__video">
+                <video
+                  src="/video/solis-studio.mp4"
+                  playsInline
+                  muted
+                  loop
+                  autoPlay
+                  preload="metadata"
+                  poster="/images/solis-studio-poster.webp"
+                  aria-label="Snimak studija"
+                />
+              </div>
+              <div className="uzivo__tekst">
+                <p className="kicker">Studio uživo</p>
+                <h3 className="naslov">
+                  Zaviri <span className="italic">prije nego dođeš</span>
+                </h3>
+                <p className="lead">
+                  Osam reformer aparata, lučna ogledala i topla rasvjeta. Svakodnevni život studija pratiš na Instagramu.
+                </p>
+                <a className="btn btn--outline" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+                  <IkonaInstagram />
+                  <span>@{INSTAGRAM}</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ========================================================= GALLERY == */}
-        <section className="gallery container" id="gallery">
-          <a href="#gallery" className="gallery__handle">
-            <h2>{INSTAGRAM_HANDLE}</h2>
-          </a>
-          <div className="gallery__grid">
-            {GALLERY.map((n) => (
-              <a href="#gallery" className="gallery__item" key={n} data-reveal>
-                <Ph n={n} className="aspect-square" />
-              </a>
-            ))}
+        {/* ========================================================= UTISCI == */}
+        <section className="utisci">
+          <div className="wrap">
+            <p className="kicker kicker--light" data-reveal>
+              Utisci
+            </p>
+            <h2 className="naslov naslov--light" data-reveal>
+              Šta kažu <span className="italic">članice</span>
+            </h2>
+
+            <div className="utisci__box" data-reveal>
+              <button type="button" className="utisci__strelica" onClick={() => naUtisak(utisak - 1)} aria-label="Prethodni utisak">
+                <Chevron dir="prev" />
+              </button>
+
+              <div className="utisci__viewport">
+                <div className="utisci__traka" style={{ transform: 'translateX(-' + utisak * 100 + '%)' }}>
+                  {UTISCI.map((u) => (
+                    <figure className="utisci__stavka" key={u.ime}>
+                      <div className="utisci__zvjezdice" aria-label="Ocjena 5 od 5">
+                        {'★★★★★'}
+                      </div>
+                      <blockquote>{u.tekst}</blockquote>
+                      <figcaption>
+                        <strong>{u.ime}</strong>
+                        <span>{u.uloga}</span>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+
+              <button type="button" className="utisci__strelica" onClick={() => naUtisak(utisak + 1)} aria-label="Sljedeći utisak">
+                <Chevron dir="next" />
+              </button>
+            </div>
+
+            <div className="utisci__tacke">
+              {UTISCI.map((u, i) => (
+                <button
+                  type="button"
+                  key={u.ime}
+                  className={'utisci__tacka' + (i === utisak ? ' is-active' : '')}
+                  onClick={() => naUtisak(i)}
+                  aria-label={'Utisak ' + (i + 1)}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* ========================================================= BOOKING == */}
-        <section className="booking bg-sand" id="booking">
-          <div className="container booking__inner" data-reveal>
-            <h2 className="serif-heading">
-              Spremni za <span className="font-italic">početak?</span>
-            </h2>
-            <p className="booking__lead">
-              Saznajte prvi za nove časove, treninge uživo i posebne događaje. Vaših 7 besplatnih dana počinje ovdje.
-            </p>
+        {/* ======================================================== KONTAKT == */}
+        <section className="kontakt" id="kontakt">
+          <div className="wrap kontakt__grid">
+            <div className="kontakt__uvod" data-reveal>
+              <p className="kicker">Prvi korak</p>
+              <h2 className="naslov">
+                Sprema li se <span className="italic">nova verzija tebe?</span>
+              </h2>
+              <p className="lead">
+                Ostavi podatke i javljamo se sa slobodnim terminima. Termin možeš odabrati i sama, kroz našu aplikaciju.
+              </p>
 
-            <form className="booking__form" action={EMAIL_SUBMIT_ENDPOINT} method="post" onSubmit={onSubscribe}>
-              <label className="visually-hidden" htmlFor="email">
-                Email adresa
+              <a className="btn btn--solid" href={LINK_APLIKACIJE}>
+                Rezerviši kroz aplikaciju
+              </a>
+
+              <dl className="kontakt__info">
+                <div>
+                  <dt>Adresa</dt>
+                  <dd>
+                    {KONTAKT.adresa}
+                    <br />
+                    {KONTAKT.grad}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Telefon</dt>
+                  <dd>{KONTAKT.telefon}</dd>
+                </div>
+                <div>
+                  <dt>Email</dt>
+                  <dd>{KONTAKT.email}</dd>
+                </div>
+                <div>
+                  <dt>Radno vrijeme</dt>
+                  <dd>{KONTAKT.radnoVrijeme}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <form className="forma" action={EMAIL_SUBMIT_ENDPOINT} method="post" onSubmit={posalji} data-reveal>
+              <h3 className="forma__naslov">Zatraži probni trening</h3>
+
+              <label className="polje">
+                <span>Ime i prezime</span>
+                <input name="ime" type="text" required autoComplete="name" />
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                placeholder="Vaša email adresa"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button type="submit" className="btn btn--solid">
-                Započni probni period
-              </button>
-            </form>
 
-            <p className="booking__note" role="status">
-              {sent ? 'Hvala — provjerite svoj inbox.' : ' '}
-            </p>
+              <label className="polje">
+                <span>Email</span>
+                <input name="email" type="email" required autoComplete="email" />
+              </label>
+
+              <label className="polje">
+                <span>Telefon</span>
+                <input name="telefon" type="tel" required autoComplete="tel" />
+              </label>
+
+              <label className="polje">
+                <span>Tip treninga</span>
+                <select name="tip" defaultValue="grupni">
+                  {PAKETI.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.naziv}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="polje">
+                <span>Poruka (nije obavezno)</span>
+                <textarea name="poruka" rows={3} />
+              </label>
+
+              <button type="submit" className="btn btn--solid forma__submit">
+                Pošalji zahtjev
+              </button>
+
+              <p className="forma__status" role="status">
+                {poslato ? 'Hvala — javljamo se u najkraćem roku.' : ' '}
+              </p>
+            </form>
           </div>
         </section>
       </main>
 
-      {/* ============================================================ FOOTER == */}
-      <footer className="footer bg-blue">
-        <div className="footer__grid">
-          <div className="footer__brand">
-            <span className="logo-word logo-word--lg">{STUDIO_NAME}</span>
+      {/* ========================================================== FOOTER == */}
+      <footer className="futer">
+        <div className="wrap futer__grid">
+          <div>
+            <img src="/logo-solis-cream.svg" alt={STUDIO} className="futer__logo" />
+            <p className="futer__adresa">
+              {KONTAKT.adresa}, {KONTAKT.grad}
+            </p>
           </div>
 
-          <nav className="footer__nav">
-            {NAV_ALL.map((l) => (
-              <a key={l.label} href={l.href} className="nav-footer">
+          <nav className="futer__nav">
+            {NAV.map((l) => (
+              <a key={l.href} href={l.href}>
                 {l.label}
               </a>
             ))}
-            <a href="#booking" className="nav-footer">
-              Privatnost
-            </a>
-            <a href="#booking" className="nav-footer">
-              Uslovi korištenja
-            </a>
           </nav>
 
-          <div className="footer__social">
-            <h3 className="footer__social-title">Pratite nas</h3>
-            <div className="footer__icons">
-              <a href="#gallery" aria-label="Facebook">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-                  <path d="M13.5 21v-8h2.7l.4-3h-3.1V8.2c0-.9.3-1.5 1.5-1.5h1.7V4.1c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.2V10H7.5v3h2.8v8h3.2z" />
-                </svg>
-              </a>
-              <a href="#gallery" aria-label="Instagram">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  aria-hidden="true"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="5" />
-                  <circle cx="12" cy="12" r="4" />
-                  <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
-                </svg>
-              </a>
-              <a href="#gallery" aria-label="TikTok">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-                  <path d="M16.5 3c.3 1.8 1.4 3.2 3.2 3.5v2.6c-1.2.1-2.4-.2-3.4-.9v5.9c0 3.3-2.6 5.9-5.9 5.9s-5.9-2.6-5.9-5.9 2.6-5.9 5.9-5.9c.3 0 .6 0 .9.1v2.8c-.3-.1-.6-.1-.9-.1a3.1 3.1 0 1 0 3.1 3.1V3h3z" />
-                </svg>
-              </a>
-            </div>
+          <div className="futer__social">
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <IkonaInstagram />
+              <span>@{INSTAGRAM}</span>
+            </a>
           </div>
         </div>
 
-        <div className="footer__copy">
-          <p>
-            © <span>{new Date().getFullYear()}</span> {STUDIO_NAME}. Sva prava zadržana.
-          </p>
-        </div>
+        <p className="futer__copy">
+          © {new Date().getFullYear()} {STUDIO}. Sva prava zadržana.
+        </p>
       </footer>
+
+      {/* ======================================================= LIGHTBOX == */}
+      {lightbox !== null && (
+        <div className="lightbox" role="dialog" aria-modal="true" aria-label="Galerija">
+          <button type="button" className="lightbox__zatvori" onClick={() => setLightbox(null)} aria-label="Zatvori">
+            ✕
+          </button>
+          <button
+            type="button"
+            className="lightbox__strelica lightbox__strelica--prev"
+            onClick={() => setLightbox((i) => ((i ?? 0) - 1 + GALERIJA.length) % GALERIJA.length)}
+            aria-label="Prethodna slika"
+          >
+            <Chevron dir="prev" />
+          </button>
+
+          <figure className="lightbox__okvir">
+            <Slika ime={GALERIJA[lightbox].slika} alt={GALERIJA[lightbox].alt} sizes="90vw" priority />
+            <figcaption>{GALERIJA[lightbox].alt}</figcaption>
+          </figure>
+
+          <button
+            type="button"
+            className="lightbox__strelica lightbox__strelica--next"
+            onClick={() => setLightbox((i) => ((i ?? 0) + 1) % GALERIJA.length)}
+            aria-label="Sljedeća slika"
+          >
+            <Chevron dir="next" />
+          </button>
+        </div>
+      )}
     </>
   );
 }
@@ -682,231 +799,210 @@ const CSS = `
 }
 
 :root {
-  --blue: #d5dfdf;
-  --sand: #e6ded2;
-  --light: #f6f5f4;
-  --dark: #29271a;
-  --line: #282919;
-  --ph: #d0d0d0;
-  --ph-ink: #999999;
+  --terakota: #d4825b;
+  --terakota-tamna: #b4653f;
+  --krem: #f1e6dc;
+  --pijesak: #f5f1ee;
+  --taupe: #c9ada0;
+  --ugalj: #2c2c2c;
+  --prigusena: #7d6c62;
+  --linija: rgba(44, 44, 44, 0.14);
   --serif: 'EB Garamond', Garamond, 'Times New Roman', Times, serif;
   --sans: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif;
+  --nav-h: 76px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: var(--nav-h); }
 
 body {
   margin: 0;
-  background-color: var(--light);
-  color: var(--dark);
+  background-color: var(--pijesak);
+  color: var(--ugalj);
   font-family: var(--sans);
-  font-weight: 300;
-  font-size: 17.5px;
-  line-height: 22px;
-  word-spacing: 1px;
+  font-size: 17px;
+  line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 { font-weight: 300; margin: 0; }
+h1, h2, h3, h4 { margin: 0; font-weight: 400; }
 p { margin: 0 0 1rem; }
 a { color: inherit; text-decoration: none; }
-img, svg { max-width: 100%; }
+img { max-width: 100%; display: block; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-ul { margin: 0; padding: 0; }
+ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
 
-.container { width: 100%; max-width: 1280px; margin-left: auto; margin-right: auto; }
-.bg-blue { background-color: var(--blue); }
-.bg-sand { background-color: var(--sand); }
-.font-italic { font-style: italic; }
-.upper { text-transform: uppercase; }
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 1.25rem; }
+@media (min-width: 768px) { .wrap { padding: 0 2.5rem; } }
+
+.italic { font-style: italic; }
+
 /* ---------------------------------------------------------- tipografija -- */
 
-/* Veličine kao na originalu — EB Garamond je normalne širine, pa mu ne treba
-   kompenzacija koju je tražio uski ITC Garamond Narrow. */
-.serif-heading {
+.display {
   font-family: var(--serif);
-  font-size: 1.575rem;
-  line-height: 1.05;
-  -webkit-font-smoothing: antialiased;
+  font-size: clamp(2.6rem, 11vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0.5rem 0 1rem;
 }
-@media (min-width: 768px) { .serif-heading { font-size: 1.975rem; } }
-@media (min-width: 1280px) { .serif-heading { font-size: 2.3rem; } }
 
-.sans-heading {
+.naslov {
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  line-height: 1.12;
+  margin: 0.35rem 0 1rem;
+}
+.naslov--light { color: var(--krem); }
+
+.kicker {
   font-family: var(--sans);
-  font-weight: 300;
-  font-size: 1.4rem;
-  line-height: 32px;
-  letter-spacing: 0.01em;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
+  color: var(--terakota);
+  margin: 0;
 }
-@media (min-width: 1024px) { .sans-heading { font-size: 1.7rem; line-height: 39px; } }
+.kicker--light { color: rgba(241, 230, 220, 0.85); }
 
-.dot { color: var(--blue); margin: 0 0.25rem; }
-@media (min-width: 768px) { .dot { margin: 0 0.5rem; } }
+.lead { font-size: 1.05rem; color: var(--prigusena); max-width: 46ch; }
+
+.sekcija__zaglavlje { max-width: 46rem; margin-bottom: 2.5rem; }
+@media (min-width: 768px) { .sekcija__zaglavlje { margin-bottom: 4rem; } }
 
 /* -------------------------------------------------------------- dugmad -- */
 
 .btn {
-  display: inline-block;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  padding: 0.35rem 2rem;
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  text-transform: uppercase;
-  color: var(--dark);
-  background: transparent;
-  transition: background-color 0.35s ease, color 0.35s ease, transform 0.35s ease;
-}
-.btn:hover, .btn:focus-visible { background-color: var(--dark); color: var(--light); transform: scale(1.04); }
-.btn--solid { background-color: var(--dark); color: var(--light); }
-.btn--solid:hover { background-color: transparent; color: var(--dark); }
-
-.btn-signup {
-  position: fixed;
-  right: 0.5rem;
-  bottom: 0.5rem;
-  z-index: 900;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background-color: var(--blue);
-  color: var(--dark);
-  padding: 0.45rem 2rem;
-  font-family: var(--sans);
-  font-size: 10px;
-  text-transform: uppercase;
-  transition: transform 0.25s ease, background-color 0.3s ease;
-}
-@media (min-width: 768px) { .btn-signup { right: 1rem; bottom: 1rem; } }
-@media (min-width: 1024px) { .btn-signup { font-size: 16px; } }
-.btn-signup:hover { transform: scale(1.05); }
-
-/* -------------------------------------------------------------- header -- */
-
-.site-header { display: none; }
-@media (min-width: 768px) {
-  .site-header {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    align-items: center;
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    z-index: 60;
-    padding: 2rem 3rem;
-  }
-}
-.nav-items {
-  display: flex;
-  flex-direction: row;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-around;
-  gap: 1rem;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
   font-family: var(--sans);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
-.nav-items a { position: relative; padding-bottom: 2px; }
-.nav-items a::after {
+.btn:hover, .btn:focus-visible { transform: translateY(-2px); }
+
+.btn--solid { background-color: var(--terakota); color: #fff; }
+.btn--solid:hover, .btn--solid:focus-visible { background-color: var(--terakota-tamna); }
+
+.btn--outline { border-color: var(--terakota); color: var(--terakota); }
+.btn--outline:hover, .btn--outline:focus-visible { background-color: var(--terakota); color: #fff; }
+
+.btn--ghost { border-color: rgba(255, 255, 255, 0.6); color: #fff; }
+.btn--ghost:hover, .btn--ghost:focus-visible { background-color: #fff; color: var(--ugalj); border-color: #fff; }
+
+.btn--pill { padding: 0.6rem 1.3rem; font-size: 0.7rem; }
+
+/* ------------------------------------------------------------ navigacija -- */
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 700;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, opacity 0.25s ease;
+  border-bottom: 1px solid transparent;
+}
+/* dok je lightbox otvoren navigacija se ne providi kroz zatamnjenje */
+.nav--sakrivena { opacity: 0; pointer-events: none; }
+
+.nav--solid {
+  background-color: rgba(245, 241, 238, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom-color: var(--linija);
+  box-shadow: 0 6px 24px rgba(44, 44, 44, 0.06);
+}
+.nav__inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  height: var(--nav-h);
+  padding: 0 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+@media (min-width: 768px) { .nav__inner { padding: 0 2.5rem; } }
+
+.nav__logo { position: relative; display: block; flex: 0 0 auto; }
+.nav__logo-img { height: 40px; width: auto; transition: opacity 0.4s ease; }
+.nav__logo-img--dark { position: absolute; inset: 0; opacity: 0; }
+.nav--solid .nav__logo-img--cream,
+.nav--na-meniju .nav__logo-img--cream { opacity: 0; }
+.nav--solid .nav__logo-img--dark,
+.nav--na-meniju .nav__logo-img--dark { opacity: 1; }
+
+.nav__links { display: none; gap: 1.75rem; }
+@media (min-width: 1024px) { .nav__links { display: flex; } }
+.nav__links a {
+  position: relative;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  padding-bottom: 3px;
+  transition: color 0.3s ease;
+}
+.nav--solid .nav__links a { color: var(--ugalj); }
+.nav__links a::after {
   content: '';
   position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
   background-color: currentColor;
   transform: scaleX(0); transform-origin: left;
   transition: transform 0.35s ease;
 }
-.nav-items a:hover::after { transform: scaleX(1); }
-.site-header__logo { text-align: center; }
+.nav__links a:hover::after { transform: scaleX(1); }
 
-.logo-word {
+.nav__cta { display: none; background-color: var(--terakota); color: #fff; }
+@media (min-width: 1024px) { .nav__cta { display: inline-flex; } }
+
+.burger { width: 40px; height: 26px; position: relative; flex: 0 0 auto; }
+@media (min-width: 1024px) { .burger { display: none; } }
+.burger span {
+  position: absolute; left: 2px; width: 32px; height: 2px;
+  background-color: #fff; border-radius: 2px;
+  transition: transform 0.35s ease, opacity 0.25s ease, top 0.35s ease, background-color 0.4s ease;
+}
+.nav--solid .burger span { background-color: var(--ugalj); }
+.burger span:nth-child(1) { top: 4px; }
+.burger span:nth-child(2) { top: 12px; }
+.burger span:nth-child(3) { top: 20px; }
+.burger.is-open span { background-color: var(--ugalj); }
+.burger.is-open span:nth-child(1) { top: 12px; transform: rotate(45deg); }
+.burger.is-open span:nth-child(2) { opacity: 0; }
+.burger.is-open span:nth-child(3) { top: 12px; transform: rotate(-45deg); }
+
+.meni {
+  position: fixed; inset: 0; z-index: 690;
+  background-color: var(--krem);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.35rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.meni.is-open { opacity: 1; pointer-events: auto; }
+.meni a {
   font-family: var(--serif);
-  font-size: 1.6rem;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 1.9rem;
+  padding: 0.4rem 1rem;
 }
-.logo-word--lg { font-size: 2.2rem; }
-
-/* -------------------------------------------------------- burger meni -- */
-
-.burger-button {
-  position: fixed;
-  top: 25px;
-  right: 12px;
-  z-index: 5000;
-  width: 51px;
-  height: 34px;
-  display: block;
-}
-@media (min-width: 768px) { .burger-button { display: none; } }
-.burger-button span {
-  position: absolute;
-  left: 8px;
-  width: 35px;
-  height: 2px;
-  background-color: #000000;
-  border-radius: 22px;
-  display: block;
-  transition: transform 0.4s ease, opacity 0.3s ease, top 0.3s ease;
-}
-.burger-top { top: 8px; }
-.burger-middle { top: 16px; }
-.burger-bottom { top: 24px; }
-.burger-button.active .burger-top { top: 16px; transform: rotate(45deg); }
-.burger-button.active .burger-middle { opacity: 0; }
-.burger-button.active .burger-bottom { top: 16px; transform: rotate(-45deg); }
-
-.burger-menu {
-  position: fixed;
-  top: 0; right: 0; bottom: 0; left: 0;
-  z-index: 1001;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(230, 222, 210, 0.96);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-.burger-menu.active { opacity: 1; pointer-events: auto; }
-.burger-menu a { padding: 0.5rem 2rem; white-space: nowrap; opacity: 0; transition: opacity 0.4s linear; }
-.burger-menu.active a { opacity: 1; transition: opacity 1s linear 0.25s; }
-.logo-burger { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); }
-.menu-text {
+/* .meni a je specifičniji od .meni__cta, pa dugme mora ovako da nadjača font */
+.meni a.meni__cta {
+  margin-top: 1.5rem;
   font-family: var(--sans);
-  font-size: 1.2rem;
-  color: #000000;
-  text-transform: uppercase;
-  margin: 0.35rem 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  padding: 0.85rem 1.75rem;
 }
-
-/* ------------------------------------------------------- placeholderi -- */
-
-.ph {
-  background-color: var(--ph);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.ph span {
-  color: var(--ph-ink);
-  font-family: var(--sans);
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-align: center;
-  padding: 0.5rem;
-}
-.aspect-square { aspect-ratio: 1 / 1; }
-.aspect-portrait { aspect-ratio: 3 / 4; }
 
 /* ----------------------------------------------------- scroll animacije -- */
 
@@ -920,297 +1016,379 @@ ul { margin: 0; padding: 0; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   [data-reveal] { opacity: 1; transform: none; transition: none; }
-  .btn, .btn-signup, .slider__track, .gallery__item .ph { transition: none; }
+  .btn, .utisci__traka, .galerija__stavka img { transition: none; }
 }
 
 /* ---------------------------------------------------------------- hero -- */
 
 .hero {
   position: relative;
-  height: 100vh;
-  height: 100svh;
+  min-height: 88vh;
+  min-height: 88svh;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: flex-end;
+  padding: calc(var(--nav-h) + 3rem) 1.25rem 4.5rem;
   overflow: hidden;
 }
-@media (min-width: 768px) { .hero { align-items: center; } }
-.hero__bg { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; }
-.hero__bg span { align-self: flex-start; margin-top: 15vh; }
-.hero__lockup { position: relative; z-index: 2; text-align: center; padding: 0 1.25rem; margin-top: 35vh; }
-@media (min-width: 768px) { .hero__lockup { margin-top: 0; } }
-.hero__logo {
+@media (min-width: 768px) { .hero { min-height: 92vh; min-height: 92svh; padding: 0 2.5rem 5.5rem; align-items: flex-end; } }
+
+.hero__media { position: absolute; inset: 0; }
+.hero__img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
+.hero__veil {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to top, rgba(30, 18, 12, 0.72) 0%, rgba(30, 18, 12, 0.22) 45%, rgba(30, 18, 12, 0.34) 100%),
+    linear-gradient(to bottom right, rgba(212, 130, 91, 0.42), rgba(180, 101, 63, 0.28));
+}
+
+.hero__content { position: relative; z-index: 2; color: #fff; max-width: 1240px; margin: 0 auto; width: 100%; }
+.hero__lead { font-size: 1.1rem; max-width: 34ch; color: rgba(255, 255, 255, 0.92); }
+@media (min-width: 768px) { .hero__lead { font-size: 1.25rem; } }
+.hero__akcije { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+
+.hero__scroll {
+  position: absolute; left: 50%; bottom: 1.4rem; transform: translateX(-50%);
+  z-index: 2; width: 24px; height: 40px; border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px; display: none;
+}
+@media (min-width: 768px) { .hero__scroll { display: block; } }
+.hero__scroll span {
+  position: absolute; left: 50%; top: 8px; width: 3px; height: 7px; margin-left: -1.5px;
+  background-color: #fff; border-radius: 2px;
+  animation: scrollDot 1.8s ease-in-out infinite;
+}
+@keyframes scrollDot {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(12px); opacity: 0.3; }
+}
+@media (prefers-reduced-motion: reduce) { .hero__scroll span { animation: none; } }
+
+/* ------------------------------------------------------------ o studiju -- */
+
+.zasto { padding: 4.5rem 0; }
+@media (min-width: 768px) { .zasto { padding: 7rem 0; } }
+.zasto__uvod { max-width: 44rem; margin-bottom: 3rem; }
+.zasto__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+@media (min-width: 1024px) { .zasto__grid { grid-template-columns: 0.85fr 1fr; gap: 4rem; } }
+
+.zasto__grafika { margin: 0; overflow: hidden; border-radius: 4px; }
+.zasto__grafika img { width: 100%; height: auto; }
+@media (min-width: 1024px) { .zasto__grafika { position: sticky; top: calc(var(--nav-h) + 2rem); } }
+
+.benefiti { display: grid; gap: 0; }
+.benefiti li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--linija);
+}
+.benefiti li:last-child { border-bottom: 1px solid var(--linija); }
+.benefiti__broj {
   font-family: var(--serif);
-  /* clamp da se dug naziv studija ne prelije preko ekrana na uskim telefonima */
-  font-size: clamp(1.9rem, 9vw, 3rem);
-  line-height: 1;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  overflow-wrap: break-word;
-  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--terakota);
+  line-height: 1.7;
 }
-@media (min-width: 768px) { .hero__logo { font-size: 5rem; } }
-@media (min-width: 1280px) { .hero__logo { font-size: 7rem; } }
-.hero__tagline {
+.benefiti h3 {
   font-family: var(--sans);
-  font-size: 0.8rem;
-  letter-spacing: 0.35em;
+  font-size: 0.86rem;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  margin: 0;
+  margin-bottom: 0.4rem;
 }
+.benefiti p { margin: 0; color: var(--prigusena); font-size: 0.98rem; }
 
-/* --------------------------------------------------------------- intro -- */
+/* --------------------------------------------------------------- citat -- */
 
-.intro { text-align: center; padding: 3rem 1.25rem; }
-@media (min-width: 768px) { .intro { padding: 5rem; } }
-@media (min-width: 1280px) { .intro { padding: 7rem 5rem; } }
-.intro__inner { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40vh; }
-@media (min-width: 1280px) { .intro__inner { min-height: 60vh; } }
-.intro__lead { margin: 2rem auto; }
-@media (min-width: 768px) { .intro__lead { max-width: 75%; margin: 3rem auto; } }
-@media (min-width: 1024px) { .intro__lead { max-width: 42%; } }
-
-/* ----------------------------------------------------------- transform -- */
-
-.transform { padding: 3rem 1.25rem; }
-@media (min-width: 768px) { .transform { padding: 5rem 2.5rem; } }
-@media (min-width: 1024px) { .transform { padding: 3rem 2.5rem; } }
-@media (min-width: 1280px) { .transform { padding: 3rem 5rem; } }
-
-.transform__grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
-@media (min-width: 768px) { .transform__grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; } }
-@media (min-width: 1024px) { .transform__grid { grid-template-columns: repeat(3, 1fr); } }
-
-.transform__col--head .serif-heading { margin-bottom: 2rem; }
-@media (min-width: 1024px) {
-  .transform__col--head { margin-top: 8rem; margin-left: 3rem; }
-  .transform__col--head .serif-heading { max-width: 70%; margin-bottom: 3rem; }
+.citat { position: relative; display: grid; place-items: center; min-height: 60vh; padding: 5rem 1.25rem; overflow: hidden; }
+@media (min-width: 768px) { .citat { min-height: 70vh; } }
+.citat__media { position: absolute; inset: 0; }
+.citat__media::after {
+  content: '';
+  position: absolute; inset: 0;
+  /* slika je svijetla, pa tekstu treba jači veo nego na hero sekciji */
+  background:
+    radial-gradient(120% 80% at 50% 50%, rgba(46, 22, 10, 0.72) 0%, rgba(46, 22, 10, 0.52) 100%);
 }
-@media (min-width: 1024px) { .transform__col--list { margin-top: 6rem; } }
-@media (min-width: 1280px) { .transform__col--list { margin-top: 8rem; } }
-.transform__col--list ul { margin-bottom: 2rem; }
-
-.transform__col--img { display: flex; align-items: center; justify-content: center; }
-@media (min-width: 768px) { .transform__col--img { grid-column: 1 / -1; } }
-@media (min-width: 1024px) { .transform__col--img { grid-column: auto; } }
-.transform__img { width: 100%; aspect-ratio: 3 / 4; }
-@media (min-width: 768px) { .transform__img { aspect-ratio: 16 / 9; } }
-@media (min-width: 1024px) { .transform__img { aspect-ratio: 1 / 1; } }
-
-/* liste s plusom, kao na originalu */
-.transform li {
-  list-style-type: none;
-  margin-bottom: 1.5rem;
-  padding-left: 2.1em;
-  text-indent: -1.1em;
-  font-family: var(--sans);
-  font-size: 1.15rem;
-  line-height: 1.75rem;
-  text-transform: uppercase;
+.citat__img { width: 100%; height: 100%; object-fit: cover; }
+.citat__tekst {
+  position: relative; z-index: 2; margin: 0; text-align: center; color: var(--krem);
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 4.5vw, 2.6rem);
+  line-height: 1.35;
 }
-.transform li::before {
-  content: '+';
-  display: inline-block;
-  vertical-align: middle;
-  font-weight: 100;
-  font-size: 2.5rem;
-  margin-right: 1rem;
-}
-@media (min-width: 768px) {
-  .transform li { padding-left: 2.6em; text-indent: -1.6em; font-size: 1.25rem; }
-  .transform li::before { margin-right: 2.5rem; }
-}
-@media (min-width: 1024px) {
-  .transform li { padding-left: 2.1em; text-indent: -1.3em; }
-  .transform li::before { font-size: 3rem; margin-right: 1.5rem; }
-}
+.citat__tekst p { margin: 0; }
 
-/* ------------------------------------------------------------ features -- */
+/* ----------------------------------------------------------- cjenovnik -- */
 
-.features { padding: 1rem 1.25rem 3rem; }
-@media (min-width: 768px) { .features { padding: 0; } }
-@media (min-width: 1280px) { .features { padding: 0 6rem; } }
-.features__grid { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 768px) { .features__grid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 768px) { .features__col { padding: 2.5rem; } }
-.feature { border-bottom: 1px solid #000000; }
-.feature__title { font-size: 1rem; line-height: 1.5rem; text-transform: uppercase; margin: 2rem 0; }
-@media (min-width: 768px) { .feature__title { margin-top: 5rem; } }
-@media (min-width: 1024px) { .feature__title { margin-bottom: 4rem; } }
-.feature p { margin-bottom: 3rem; }
-.features__col--media {
+.cjenovnik { padding: 4.5rem 0; background-color: #fff; }
+@media (min-width: 768px) { .cjenovnik { padding: 7rem 0; } }
+
+.paketi { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+@media (min-width: 768px) { .paketi { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; } }
+
+.paket {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 1.5rem;
-  margin-top: 3rem;
+  padding: 2rem 1.75rem 1.75rem;
+  border: 1px solid var(--linija);
+  border-radius: 6px;
+  background-color: var(--pijesak);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
-.features__video { width: 100%; min-height: 70vh; }
-@media (min-width: 768px) { .features__video { min-height: 45vh; } }
-@media (min-width: 1280px) { .features__video { min-height: 80vh; } }
-
-/* ---------------------------------------------------------------- meet -- */
-
-@media (min-width: 1024px) { .meet { padding-top: 2.5rem; padding-left: 2.5rem; } }
-.meet__grid { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 768px) { .meet__grid { grid-template-columns: repeat(8, 1fr); } }
-.meet__portrait { padding: 2.5rem 1.25rem 2rem; }
-@media (min-width: 768px) { .meet__portrait { grid-column: span 4; padding: 2.5rem 2.5rem 2rem 1.25rem; } }
-@media (min-width: 1024px) { .meet__portrait { grid-column: span 3; } }
-@media (min-width: 1280px) { .meet__portrait { padding: 2.5rem; } }
-.meet__body { padding: 0 1.25rem 2.5rem; }
-@media (min-width: 768px) { .meet__body { grid-column: span 4; padding: 6rem 2.5rem 2.5rem; } }
-@media (min-width: 1024px) { .meet__body { grid-column: span 5; padding-left: 0; padding-right: 5rem; } }
-.meet__title { margin-bottom: 2rem; }
-@media (min-width: 1024px) { .meet__title { margin-bottom: 3rem; } }
-.meet__text { display: grid; grid-template-columns: 1fr; align-items: start; }
-@media (min-width: 1024px) { .meet__text { grid-template-columns: repeat(2, 1fr); gap: 2rem; } }
-.meet__text p { margin-bottom: 2rem; }
-@media (min-width: 1024px) { .meet__text p { margin-bottom: 4rem; } }
-.meet__btn { margin-bottom: 2rem; }
-.meet__wide { display: grid; grid-template-columns: repeat(2, 1fr); margin-top: 2rem; }
-.meet__wide-img { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
-@media (min-width: 1024px) { .meet__wide-img { grid-column: 2 / -1; } }
-
-/* -------------------------------------------------------- testimonials -- */
-
-.testimonials {
-  display: grid;
-  /* minmax(0, 1fr) a ne 1fr — inače se kolona raširi na širinu cijele trake slidera */
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-  text-align: center;
-  padding: 2.5rem 1.25rem;
+.paket:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(44, 44, 44, 0.09);
+  border-color: var(--taupe);
 }
-@media (min-width: 768px) { .testimonials { padding: 3rem; } }
-@media (min-width: 1024px) { .testimonials { padding: 9rem 5rem; } }
-.testimonials__title { margin-bottom: 2rem; }
-@media (min-width: 1024px) { .testimonials__title { margin-bottom: 5rem; } }
+.paket__naziv { font-family: var(--serif); font-size: 1.7rem; margin-bottom: 0.5rem; }
+.paket__opis { color: var(--prigusena); font-size: 0.95rem; min-height: 3.6rem; }
 
-.slider { display: flex; align-items: center; gap: 0.25rem; width: 100%; max-width: 100%; margin: 0 auto 1.5rem; }
-@media (min-width: 768px) { .slider { width: 80%; gap: 1rem; } }
-@media (min-width: 1280px) { .slider { width: 58%; } }
-.slider__viewport { overflow: hidden; flex: 1 1 auto; min-width: 0; }
-.slider__track { display: flex; transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1); }
-.slider__item { flex: 0 0 100%; margin: 0; padding: 0 0.5rem; }
-.slider__quote {
-  font-family: var(--serif);
-  font-size: 1.35rem;
-  line-height: 1.45;
-  margin: 0 0 2rem;
-}
-@media (min-width: 768px) { .slider__quote { font-size: 1.65rem; } }
-.slider__name { font-family: var(--sans); font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; }
-.slider__arrow {
-  flex: 0 0 auto;
+.paket__cijene { margin: 0.5rem 0 1.75rem; border-top: 1px solid var(--linija); }
+.paket__cijene li {
   display: flex;
-  align-items: center;
-  color: var(--dark);
-  opacity: 0.55;
-  padding: 0.5rem 0.25rem;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--linija);
 }
-.slider__arrow:hover { opacity: 1; transform: scale(1.15); }
-.slider__dots { display: flex; gap: 0.5rem; margin-bottom: 2.5rem; }
-.slider__dot {
+.paket__cijene li.is-highlight { color: var(--terakota-tamna); }
+.paket__stavka { display: flex; flex-direction: column; font-size: 0.95rem; }
+.paket__oznaka {
+  font-style: normal;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--terakota);
+}
+.paket__cijena { font-family: var(--serif); font-size: 1.45rem; white-space: nowrap; }
+.paket__cta { margin-top: auto; align-self: flex-start; }
+
+.cjenovnik__napomena {
+  margin-top: 1.75rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--prigusena);
+}
+
+/* ------------------------------------------------------- instruktorica -- */
+
+.instruktorica { padding: 4.5rem 0; }
+@media (min-width: 768px) { .instruktorica { padding: 7rem 0; } }
+.instruktorica__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; align-items: center; }
+@media (min-width: 1024px) { .instruktorica__grid { grid-template-columns: 1fr 1fr; gap: 4.5rem; } }
+
+.instruktorica__slike { position: relative; padding-bottom: 4rem; }
+.instruktorica__glavna { margin: 0; overflow: hidden; border-radius: 4px; }
+.instruktorica__glavna img { width: 100%; height: auto; }
+.instruktorica__mala {
+  position: absolute; right: 0; bottom: 0; width: 42%;
+  margin: 0; overflow: hidden; border-radius: 4px;
+  border: 6px solid var(--pijesak);
+}
+.instruktorica__mala img { width: 100%; height: auto; }
+
+.instruktorica__tekst p { color: var(--prigusena); }
+.instruktorica__fakta {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1.75rem 0 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--linija);
+}
+@media (min-width: 640px) { .instruktorica__fakta { grid-template-columns: repeat(3, 1fr); } }
+.instruktorica__fakta dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--terakota);
+  margin-bottom: 0.3rem;
+}
+.instruktorica__fakta dd { font-size: 0.95rem; }
+
+/* ------------------------------------------------------------ galerija -- */
+
+.galerija { padding: 4.5rem 0; background-color: var(--krem); }
+@media (min-width: 768px) { .galerija { padding: 7rem 0; } }
+
+.galerija__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+@media (min-width: 768px) { .galerija__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; } }
+
+.galerija__stavka {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 4px;
+  background-color: var(--taupe);
+  padding: 0;
+}
+.galerija__stavka img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.galerija__stavka:hover img, .galerija__stavka:focus-visible img { transform: scale(1.06); }
+
+/* traka sa snimkom studija */
+.uzivo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  margin-top: 3.5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid rgba(44, 44, 44, 0.12);
+}
+@media (min-width: 768px) { .uzivo { grid-template-columns: 300px 1fr; gap: 3.5rem; } }
+.uzivo__video {
+  overflow: hidden;
+  border-radius: 6px;
+  background-color: var(--taupe);
+  aspect-ratio: 520 / 900;
+  max-width: 300px;
+}
+.uzivo__video video { width: 100%; height: 100%; object-fit: cover; }
+.uzivo__tekst .naslov { margin-bottom: 0.75rem; }
+
+/* -------------------------------------------------------------- utisci -- */
+
+.utisci { padding: 4.5rem 0; background-color: var(--terakota); color: var(--krem); text-align: center; }
+@media (min-width: 768px) { .utisci { padding: 7rem 0; } }
+.utisci .naslov { margin-bottom: 2.5rem; }
+
+.utisci__box { display: flex; align-items: center; gap: 0.5rem; max-width: 46rem; margin: 0 auto; }
+@media (min-width: 768px) { .utisci__box { gap: 1.5rem; } }
+.utisci__viewport { overflow: hidden; flex: 1 1 auto; min-width: 0; }
+.utisci__traka { display: flex; transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.utisci__stavka { flex: 0 0 100%; margin: 0; padding: 0 0.5rem; }
+.utisci__zvjezdice { font-size: 0.9rem; letter-spacing: 0.35em; margin-bottom: 1.25rem; color: var(--krem); }
+.utisci__stavka blockquote {
+  margin: 0 0 1.5rem;
+  font-family: var(--serif);
+  font-size: clamp(1.35rem, 3.4vw, 1.9rem);
+  line-height: 1.4;
+}
+.utisci__stavka figcaption { display: flex; flex-direction: column; gap: 0.2rem; }
+.utisci__stavka figcaption strong {
+  font-weight: 400; font-size: 0.82rem; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.utisci__stavka figcaption span { font-size: 0.78rem; color: rgba(241, 230, 220, 0.75); }
+
+.utisci__strelica { flex: 0 0 auto; padding: 0.5rem; opacity: 0.7; transition: opacity 0.3s ease, transform 0.3s ease; }
+.utisci__strelica:hover { opacity: 1; transform: scale(1.12); }
+
+.utisci__tacke { display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem; }
+.utisci__tacka {
   width: 8px; height: 8px; border-radius: 50%;
-  background-color: transparent; border: 1px solid var(--line);
+  border: 1px solid rgba(241, 230, 220, 0.7); background-color: transparent;
   transition: background-color 0.3s ease;
 }
-.slider__dot.is-active { background-color: var(--dark); }
+.utisci__tacka.is-active { background-color: var(--krem); }
 
-/* ------------------------------------------------------------- classes -- */
+/* ------------------------------------------------------------- kontakt -- */
 
-.classes { padding: 2.5rem 1.25rem; }
-@media (min-width: 768px) { .classes { padding: 3rem 2.5rem; } }
-@media (min-width: 1024px) { .classes { padding: 5rem 7rem; } }
-.classes__grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
-@media (min-width: 768px) { .classes__grid { grid-template-columns: 3fr 4fr; gap: 2.5rem; } }
-.classes__nav { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
-@media (min-width: 768px) { .classes__nav { gap: 5rem; margin-top: 2rem; } }
-.class-link { text-align: left; opacity: 0.5; transition: opacity 0.35s ease; }
-.class-link.is-active, .class-link:hover { opacity: 1; }
-.class-link::after {
-  content: '';
-  display: block; height: 1px;
-  background-color: currentColor;
-  transform: scaleX(0); transform-origin: left;
-  transition: transform 0.4s ease;
+.kontakt { padding: 4.5rem 0; }
+@media (min-width: 768px) { .kontakt { padding: 7rem 0; } }
+.kontakt__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3rem; }
+@media (min-width: 1024px) { .kontakt__grid { grid-template-columns: 1fr 1fr; gap: 4.5rem; align-items: start; } }
+
+.kontakt__info {
+  display: grid; gap: 1.5rem;
+  margin-top: 2.5rem; padding-top: 2rem;
+  border-top: 1px solid var(--linija);
 }
-.class-link.is-active::after { transform: scaleX(1); }
-.classes__media { width: 100%; aspect-ratio: 16 / 9; margin-bottom: 1rem; }
-.classes__content p { margin-bottom: 1.5rem; }
+@media (min-width: 640px) { .kontakt__info { grid-template-columns: repeat(2, 1fr); } }
+.kontakt__info dt {
+  font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--terakota); margin-bottom: 0.35rem;
+}
+.kontakt__info dd { font-size: 0.98rem; }
 
-/* ------------------------------------------------------------- gallery -- */
+.forma {
+  background-color: #fff;
+  border: 1px solid var(--linija);
+  border-radius: 6px;
+  padding: 1.75rem;
+}
+@media (min-width: 768px) { .forma { padding: 2.5rem; } }
+.forma__naslov { font-family: var(--serif); font-size: 1.6rem; margin-bottom: 1.5rem; }
 
-.gallery { padding: 2.5rem 1.25rem; }
-@media (min-width: 768px) { .gallery { padding: 6rem 1.25rem; } }
-@media (min-width: 1280px) { .gallery { padding: 6rem 4rem; } }
-.gallery__handle h2 { font-family: var(--serif); font-size: 1.875rem; margin-bottom: 1rem; }
-.gallery__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-@media (min-width: 768px) { .gallery__grid { grid-template-columns: repeat(4, 1fr); } }
-.gallery__item { display: block; overflow: hidden; }
-.gallery__item .ph { transition: transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1); }
-.gallery__item:hover .ph { transform: scale(1.07); }
-
-/* ------------------------------------------------------------- booking -- */
-
-.booking { padding: 3rem 1.25rem; border-top: 1px solid #000000; }
-@media (min-width: 768px) { .booking { padding: 6rem 2.5rem; } }
-.booking__inner { max-width: 720px; margin: 0 auto; text-align: center; }
-.booking__lead { margin: 1.5rem auto 2.5rem; max-width: 36rem; }
-.booking__form { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-@media (min-width: 768px) { .booking__form { flex-direction: row; justify-content: center; } }
-.booking__form input {
+.polje { display: block; margin-bottom: 1.1rem; }
+.polje > span {
+  display: block; margin-bottom: 0.4rem;
+  font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--prigusena);
+}
+.polje input, .polje select, .polje textarea {
   width: 100%;
-  max-width: 22rem;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  padding: 0.6rem 0.25rem;
   font-family: var(--sans);
   font-size: 1rem;
-  color: var(--dark);
+  color: var(--ugalj);
+  background-color: var(--pijesak);
+  border: 1px solid var(--linija);
+  border-radius: 4px;
+  padding: 0.7rem 0.85rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.booking__form input::placeholder { color: rgba(41, 39, 26, 0.55); }
-.booking__form input:focus { outline: none; border-bottom-width: 2px; }
-.booking__note { margin-top: 1.25rem; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; min-height: 1.2em; }
+.polje textarea { resize: vertical; }
+.polje input:focus, .polje select:focus, .polje textarea:focus {
+  outline: none;
+  border-color: var(--terakota);
+  box-shadow: 0 0 0 3px rgba(212, 130, 91, 0.16);
+}
+.forma__submit { width: 100%; margin-top: 0.5rem; }
+.forma__status {
+  margin: 0.9rem 0 0; min-height: 1.2em; text-align: center;
+  font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--terakota-tamna);
+}
 
-/* -------------------------------------------------------------- footer -- */
+/* --------------------------------------------------------------- futer -- */
 
-.footer { border-top: 1px solid #000000; padding: 2rem; }
-@media (min-width: 768px) { .footer { padding: 2.5rem; } }
-@media (min-width: 1024px) { .footer { padding: 5rem 2.5rem 2rem; } }
-.footer__grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-@media (min-width: 1024px) { .footer__grid { grid-template-columns: 1.2fr 1fr 0.8fr; gap: 2.5rem; } }
-.footer__brand { display: flex; align-items: flex-end; }
-.footer__nav { columns: 2; column-gap: 1rem; }
-.nav-footer {
-  display: block;
-  margin-bottom: 1rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-transform: uppercase;
+.futer { background-color: var(--ugalj); color: var(--krem); padding: 3.5rem 0 1.75rem; }
+.futer__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.25rem; }
+@media (min-width: 768px) { .futer__grid { grid-template-columns: 1.4fr 1fr 1fr; gap: 2.5rem; } }
+.futer__logo { height: 52px; width: auto; margin-bottom: 1rem; }
+.futer__adresa { font-size: 0.92rem; color: rgba(241, 230, 220, 0.72); margin: 0; }
+.futer__nav { display: grid; gap: 0.6rem; }
+.futer__nav a {
+  font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
   transition: opacity 0.3s ease;
 }
-.nav-footer:hover { opacity: 0.6; }
-.footer__social-title { font-size: 0.8rem; font-weight: 500; text-transform: uppercase; margin-bottom: 1rem; }
-.footer__icons { display: flex; gap: 1rem; }
-.footer__icons a { transition: transform 0.3s ease; }
-.footer__icons a:hover { transform: translateY(-3px); }
-.footer__copy { margin-top: 2rem; display: flex; justify-content: flex-start; }
-@media (min-width: 1024px) { .footer__copy { justify-content: flex-end; } }
-.footer__copy p { font-size: 0.875rem; margin: 0; }
-
-/* ------------------------------------------------------------ utilities -- */
-/* Namjerno na kraju fajla: moraju da nadjačaju display iz .btn i sličnih.     */
-
-.hide-mobile { display: none; }
-.only-mobile { display: inline-block; }
-@media (min-width: 768px) {
-  .hide-mobile { display: inline-block; }
-  .only-mobile { display: none; }
+.futer__nav a:hover { opacity: 0.65; }
+.futer__social a {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-size: 0.82rem; letter-spacing: 0.06em;
+  transition: opacity 0.3s ease;
 }
+.futer__social a:hover { opacity: 0.65; }
+.futer__copy {
+  max-width: 1240px; margin: 2.5rem auto 0; padding: 1.5rem 1.25rem 0;
+  border-top: 1px solid rgba(241, 230, 220, 0.16);
+  font-size: 0.78rem; color: rgba(241, 230, 220, 0.6);
+}
+@media (min-width: 768px) { .futer__copy { padding: 1.5rem 2.5rem 0; } }
+
+/* ------------------------------------------------------------ lightbox -- */
+
+.lightbox {
+  position: fixed; inset: 0; z-index: 900;
+  background-color: rgba(28, 18, 14, 0.94);
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.5rem; padding: 3.5rem 0.75rem;
+  animation: lbIn 0.25s ease;
+}
+@keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
+.lightbox__okvir { margin: 0; max-width: min(1100px, 92vw); max-height: 100%; text-align: center; }
+.lightbox__okvir img { max-height: 78vh; width: auto; margin: 0 auto; border-radius: 4px; }
+.lightbox__okvir figcaption {
+  margin-top: 1rem; font-size: 0.78rem; letter-spacing: 0.1em;
+  color: rgba(241, 230, 220, 0.7);
+}
+.lightbox__zatvori {
+  position: absolute; top: 1rem; right: 1.25rem;
+  color: var(--krem); font-size: 1.4rem; line-height: 1; padding: 0.5rem;
+}
+.lightbox__strelica { flex: 0 0 auto; color: var(--krem); opacity: 0.75; padding: 0.75rem; }
+.lightbox__strelica:hover { opacity: 1; }
 `;
