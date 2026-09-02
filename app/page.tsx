@@ -633,7 +633,7 @@ export default function Home() {
       <footer className="futer">
         <div className="okvir futer__mreza">
           <div className="futer__brend">
-            <img src="/logo-solis-cream.svg" alt={STUDIO} className="futer__logo" />
+            <img src="/logo-solis-terakota.svg" alt={STUDIO} className="futer__logo" />
           </div>
 
           <nav className="futer__nav">
@@ -744,6 +744,9 @@ const CSS = `
 :root {
   --terakota: #d4825b;
   --terakota-tamna: #b4653f;
+  /* ista narandžasta, samo dublja — čista terakota na svijetloj podlozi daje
+     kontrast 2.75:1, premalo za sitan tekst; ova nijansa daje 4.98:1 */
+  --terakota-tekst: #a25733;
   --bijela: #ffffff;
   --pijesak: #f5f1ee;
   --ugalj: #2c2c2c;
@@ -846,7 +849,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
   background-color: var(--bijela); border-color: var(--bijela); color: var(--ugalj);
 }
 
-.btn--obrnuti { border-color: var(--pijesak); color: var(--pijesak); }
+.btn--obrnuti { border-color: var(--terakota); color: var(--terakota); }
 .btn--obrnuti:hover { background-color: var(--terakota); border-color: var(--terakota); color: var(--bijela); }
 
 .btn-trial {
@@ -1272,7 +1275,13 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 
 /* --------------------------------------------------------------- futer -- */
 
-.futer { background-color: var(--ugalj); color: var(--pijesak); padding: 3rem 0 1.5rem; }
+/* bijelo-bež podloga, terakota tekst — nijansa svjetlija od pozadine stranice
+   da se futer čita kao zasebna traka ispod terakota kontakt sekcije */
+.futer {
+  background-color: #faf7f4;
+  color: var(--terakota);
+  padding: 3rem 0 1.5rem;
+}
 @media (min-width: 1024px) { .futer { padding: 5rem 0 1.5rem; } }
 .futer__mreza { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
 @media (min-width: 1024px) { .futer__mreza { grid-template-columns: 1.1fr 0.9fr 1fr; gap: 3rem; } }
@@ -1281,12 +1290,14 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 .futer__nav a {
   display: block; margin-bottom: 0.9rem;
   font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--terakota-tekst);
   transition: opacity 0.3s ease;
 }
 .futer__nav a:hover { opacity: 0.6; }
 
 .futer__forma h3 {
   font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 1rem;
+  color: var(--terakota-tekst);
 }
 .futer__forma form { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 .futer__forma input {
@@ -1294,31 +1305,33 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
   min-width: 0;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid rgba(245, 241, 238, 0.4);
-  color: var(--pijesak);
+  border-bottom: 1px solid rgba(212, 130, 91, 0.45);
+  color: var(--terakota-tamna);
   font-family: var(--sans);
   font-size: 0.95rem;
   padding: 0.5rem 0.25rem;
 }
-.futer__forma input::placeholder { color: rgba(245, 241, 238, 0.45); }
+.futer__forma input::placeholder { color: rgba(212, 130, 91, 0.55); }
 .futer__forma input:focus { outline: none; border-bottom-color: var(--terakota); }
 .futer__status {
   margin: 0.75rem 0 0; min-height: 1.2em;
-  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe);
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--terakota-tamna);
 }
 .futer__ig {
   display: inline-flex; align-items: center; gap: 0.6rem;
   margin-top: 1.25rem; font-size: 0.82rem;
+  color: var(--terakota-tekst);
   transition: opacity 0.3s ease;
 }
 .futer__ig:hover { opacity: 0.65; }
 
 .futer__dno {
   margin-top: 2.5rem; padding-top: 1.25rem;
-  border-top: 1px solid rgba(245, 241, 238, 0.16);
+  border-top: 1px solid rgba(212, 130, 91, 0.28);
 }
-.futer__dno p { margin: 0; font-size: 0.78rem; color: rgba(245, 241, 238, 0.6); }
-@media (min-width: 1024px) { .futer__dno { text-align: right; } }
+.futer__dno p { margin: 0; font-size: 0.78rem; color: var(--terakota-tekst); }
+/* copyright ostaje lijevo — desno ga prekriva fiksno dugme „Zatraži trial klasu” */
+.futer { padding-bottom: 2.5rem; }
 
 /* ------------------------------------------------------------ lightbox -- */
 
