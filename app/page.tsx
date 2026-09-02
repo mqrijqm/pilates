@@ -635,12 +635,50 @@ export default function Home() {
 /* Mobile-first. Prelomne tačke: 768px (tablet), 1024px i 1280px (desktop).   */
 
 const CSS = `
+/* EB Garamond, self-hostovan — ima sva naša slova (č ć ž š đ) i pravi italic rez.
+   Podijeljen na latin i latin-ext: browser skida latin-ext samo ako stranica
+   zaista koristi ta slova. */
+
 @font-face {
-  font-family: 'ITC Garamond Std';
-  src: url('/fonts/ITCGaramondStd-LightNarrow.otf') format('opentype');
-  font-weight: 300;
+  font-family: 'EB Garamond';
+  src: url('/fonts/EBGaramond-Regular-latin-ext.woff2') format('woff2');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/EBGaramond-Regular-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/EBGaramond-Italic-latin-ext.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/EBGaramond-Italic-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 :root {
@@ -651,7 +689,7 @@ const CSS = `
   --line: #282919;
   --ph: #d0d0d0;
   --ph-ink: #999999;
-  --serif: 'ITC Garamond Std', Garamond, 'Times New Roman', Times, serif;
+  --serif: 'EB Garamond', Garamond, 'Times New Roman', Times, serif;
   --sans: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif;
 }
 
@@ -690,14 +728,16 @@ ul { margin: 0; padding: 0; }
 }
 /* ---------------------------------------------------------- tipografija -- */
 
+/* Veličine kao na originalu — EB Garamond je normalne širine, pa mu ne treba
+   kompenzacija koju je tražio uski ITC Garamond Narrow. */
 .serif-heading {
   font-family: var(--serif);
-  font-size: 1.7rem;
+  font-size: 1.575rem;
   line-height: 1.05;
   -webkit-font-smoothing: antialiased;
 }
-@media (min-width: 768px) { .serif-heading { font-size: 2.2rem; } }
-@media (min-width: 1280px) { .serif-heading { font-size: 2.6rem; } }
+@media (min-width: 768px) { .serif-heading { font-size: 1.975rem; } }
+@media (min-width: 1280px) { .serif-heading { font-size: 2.3rem; } }
 
 .sans-heading {
   font-family: var(--sans);
@@ -901,10 +941,12 @@ ul { margin: 0; padding: 0; }
 @media (min-width: 768px) { .hero__lockup { margin-top: 0; } }
 .hero__logo {
   font-family: var(--serif);
-  font-size: 3rem;
+  /* clamp da se dug naziv studija ne prelije preko ekrana na uskim telefonima */
+  font-size: clamp(1.9rem, 9vw, 3rem);
   line-height: 1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  overflow-wrap: break-word;
   margin-bottom: 1rem;
 }
 @media (min-width: 768px) { .hero__logo { font-size: 5rem; } }

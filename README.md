@@ -54,14 +54,20 @@ Zamjena jednog placeholdera:
 
 ### Fontovi
 
-- **Serif:** ITC Garamond Std Light Narrow — u `public/fonts/`, učitava se preko `@font-face`.
+- **Serif:** EB Garamond (OFL, besplatan), self-hostovan u `public/fonts/` kao woff2.
   Original sajt koristi Instrument Serif.
+  Podijeljen je na `latin` i `latin-ext` podskup preko `unicode-range` — browser skida
+  latin-ext samo kada stranica zaista koristi č, ć, đ i slična slova.
 - **Sans:** Helvetica Neue / Helvetica / Arial (sistemski stack).
   Original koristi Neue Haas Grotesk Display 35 ExtraLight — Helvetica je isti dizajn,
   pa je razlika minimalna. Ako klijent kupi Neue Haas licencu, dodaj `@font-face` i
   promijeni samo `--sans` u CSS-u.
 
-Bez Google Fonts — nema eksternih zahtjeva pri učitavanju.
+Bez Google Fonts CDN-a — fontovi se serviraju s istog domena, nema eksternih zahtjeva.
+
+> **Zašto ne ITC Garamond Light Narrow:** taj rez nema glyphove za **č, ć, đ, Č, Ć, Đ**
+> (ima ž i š), pa bi browser ta slova podmetao iz sistemskog fonta i u naslovima bi se
+> miješala dva pisma. EB Garamond ima potpunu podršku za bosanski i pravi italic rez.
 
 ## Boje (izvučene iz originalnog CSS-a sajta)
 
