@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Pilates Studio',
+  title: 'Pilates studio',
   description:
-    'An online studio that creates lifelong, transformative results for your body and mind. Start your free trial today.',
+    'Online studio koji stvara trajne, transformativne rezultate za vaše tijelo i um. Započnite besplatni probni period danas.',
 };
 
 export const viewport: Viewport = {
@@ -15,7 +15,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="bs">
       <body>{children}</body>
     </html>
   );

@@ -3,7 +3,7 @@
 /* =============================================================================
    PILATES STUDIO — jednofajlni klon layouta pilateswithharriet.com
    -----------------------------------------------------------------------------
-   ŠTA KLIJENT MENJA (sve je na jednom mestu, odmah ispod):
+   ŠTA KLIJENT MIJENJA (sve je na jednom mjestu, odmah ispod):
      1. STUDIO_NAME            -> pravi naziv studija
      2. FOUNDER_NAME           -> ime instruktora / osnivača
      3. INSTAGRAM_HANDLE       -> pravi handle
@@ -19,86 +19,86 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 /* ---------------------------------------------------------------- KONFIG -- */
 
 const STUDIO_NAME = '[STUDIO_NAZIV]';
-const STUDIO_TAGLINE = 'Connect · Sculpt · Strengthen';
+const STUDIO_TAGLINE = 'Poveži · Oblikuj · Ojačaj';
 const FOUNDER_NAME = '[IME_INSTRUKTORA]';
 const INSTAGRAM_HANDLE = '@[INSTAGRAM_HANDLE]';
 const EMAIL_SUBMIT_ENDPOINT = '[EMAIL_SUBMIT_ENDPOINT]';
 
 const NAV_LEFT = [
-  { label: 'About', href: '#about' },
-  { label: 'Meet ' + FOUNDER_NAME, href: '#meet' },
+  { label: 'O studiju', href: '#about' },
+  { label: 'Upoznaj ' + FOUNDER_NAME, href: '#meet' },
 ];
 
 const NAV_RIGHT = [
-  { label: 'Virtual Studio', href: '#classes' },
-  { label: 'Live Classes', href: '#classes' },
+  { label: 'Virtuelni studio', href: '#classes' },
+  { label: 'Časovi uživo', href: '#classes' },
 ];
 
 const NAV_ALL = [
-  { label: 'Home', href: '#top' },
-  { label: 'Start Your Trial', href: '#booking' },
-  { label: 'About', href: '#about' },
-  { label: 'Meet ' + FOUNDER_NAME, href: '#meet' },
-  { label: 'Virtual Studio', href: '#classes' },
-  { label: 'Live Classes', href: '#classes' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Contact', href: '#booking' },
+  { label: 'Početna', href: '#top' },
+  { label: 'Započni probni period', href: '#booking' },
+  { label: 'O studiju', href: '#about' },
+  { label: 'Upoznaj ' + FOUNDER_NAME, href: '#meet' },
+  { label: 'Virtuelni studio', href: '#classes' },
+  { label: 'Časovi uživo', href: '#classes' },
+  { label: 'Galerija', href: '#gallery' },
+  { label: 'Kontakt', href: '#booking' },
 ];
 
 const LIST_ITEMS = [
-  'On demand library of classes',
-  'Monthly challenges',
-  'Live classes each month',
-  'New classes every month',
-  '7 day free trial',
+  'Biblioteka časova na zahtjev',
+  'Mjesečni izazovi',
+  'Časovi uživo svakog mjeseca',
+  'Novi časovi svakog mjeseca',
+  '7 dana besplatno',
 ];
 
 const FEATURES_LEFT = [
   {
-    title: 'Workout anytime and anywhere',
-    text: 'Pilates can be done whenever, wherever. It is like having the very best studio at your fingertips.',
+    title: 'Vježbajte bilo kada i bilo gdje',
+    text: 'Pilates možete raditi kad god i gdje god želite. Kao da vam je najbolji studio na dohvat ruke.',
   },
   {
-    title: 'Fun and effective Pilates workouts',
-    text: 'Classes designed to build strength and connection, giving you the best relationship with your body.',
+    title: 'Zabavni i efikasni pilates treninzi',
+    text: 'Časovi osmišljeni da grade snagu i povezanost, za najbolji odnos s vlastitim tijelom.',
   },
 ];
 
 const FEATURES_RIGHT = [
   {
-    title: 'New Pilates classes added every month',
-    text: 'An online studio offering a variety of Pilates workouts, so you can try a new workout every day and build a consistent practice into your routine.',
+    title: 'Novi pilates časovi svakog mjeseca',
+    text: 'Online studio s raznovrsnim pilates treninzima, da svaki dan možete probati novi trening i izgraditi dosljednu praksu u svojoj rutini.',
   },
   {
-    title: 'Monthly challenges with rewards',
-    text: 'Designed to take your practice to the next level and help you stay committed to yourself, with a new reward every month once you have completed it.',
+    title: 'Mjesečni izazovi s nagradama',
+    text: 'Osmišljeni da podignu vašu praksu na viši nivo i pomognu vam da ostanete dosljedni sebi, uz novu nagradu svakog mjeseca kada ih završite.',
   },
 ];
 
 const TESTIMONIALS = [
   {
     quote:
-      'The classes are my favourite part of the day. A calm, positive and encouraging energy makes the time fly by. I have seen my strength and confidence build dramatically in just three months.',
+      'Časovi su mi najdraži dio dana. Smirena, pozitivna i ohrabrujuća energija čini da vrijeme proleti. Za samo tri mjeseca moja snaga i samopouzdanje su dramatično porasli.',
     name: '[IME_KLIJENTA_1]',
   },
   {
     quote:
-      'After giving birth to my second child, getting my abdominal strength back seemed unimaginable. After training here for over a year I am stronger and in better shape than I was before having children.',
+      'Nakon rođenja drugog djeteta, povratak trbušne snage činio mi se nezamislivim. Nakon više od godinu dana treninga ovdje, jača sam i u boljoj formi nego prije djece.',
     name: '[IME_KLIJENTA_2]',
   },
   {
     quote:
-      'I have tried every workout under the sun, from weight training to spin and running, but nothing has given me better results and more peace with my body than these Pilates classes.',
+      'Probala sam sve moguće treninge, od tegova do spinninga i trčanja, ali ništa mi nije dalo bolje rezultate ni više mira s vlastitim tijelom od ovih pilates časova.',
     name: '[IME_KLIJENTA_3]',
   },
   {
     quote:
-      'I am a personal trainer myself so I always thought of myself as strong, but this takes it to the next level. My strength workouts have improved massively since I started here.',
+      'I sama sam personalna trenerica pa sam se oduvijek smatrala jakom, ali ovo je viši nivo. Moji treninzi snage su se enormno popravili otkako dolazim ovdje.',
     name: '[IME_KLIJENTA_4]',
   },
   {
     quote:
-      'The perfect mix of classical and contemporary, and every class is unique with extra focus on form and alignment. My practice has transformed in the past few months.',
+      'Savršen spoj klasičnog i savremenog, a svaki čas je jedinstven uz poseban fokus na formu i poravnanje. Moja praksa se transformisala u posljednjih nekoliko mjeseci.',
     name: '[IME_KLIJENTA_5]',
   },
 ];
@@ -106,21 +106,21 @@ const TESTIMONIALS = [
 const CLASS_TYPES = [
   {
     id: 'tone',
-    title: 'Sculpt & Tone',
+    title: 'Oblikovanje i tonus',
     image: 6,
-    text: 'Designed to strengthen, sculpt and align. Enjoy the slow burn of Pilates and discover muscles you did not even know you had. Suitable for all levels.',
+    text: 'Osmišljeni da ojačaju, oblikuju i poravnaju tijelo. Uživajte u sporom gorenju pilatesa i otkrijte mišiće za koje niste ni znali da postoje. Pogodno za sve nivoe.',
   },
   {
     id: 'stretch',
-    title: 'Sculpt & Stretch',
+    title: 'Oblikovanje i istezanje',
     image: 7,
-    text: 'The body works in harmony when we find the right balance of strength and flexibility. These classes are designed for exactly that.',
+    text: 'Tijelo radi u harmoniji kada nađemo pravu ravnotežu snage i fleksibilnosti. Ovi časovi su osmišljeni upravo za to.',
   },
   {
     id: 'beginners',
-    title: 'For Beginners',
+    title: 'Za početnike',
     image: 8,
-    text: 'The perfect place to begin your Pilates journey. Fundamental classes that improve posture, strength and flexibility, with extra focus on form, breath and technique.',
+    text: 'Savršeno mjesto za početak vašeg pilates puta. Osnovni časovi koji poboljšavaju držanje, snagu i fleksibilnost, uz poseban fokus na formu, disanje i tehniku.',
   },
 ];
 
@@ -129,8 +129,8 @@ const GALLERY = [9, 10, 11, 12, 13, 14, 15, 16];
 /* ------------------------------------------------------ POMOĆNE KOMPONENTE */
 
 /**
- * Placeholder za sliku — klijent ga zamenjuje pravim <img> / next/image tagom.
- * Zadržava aspect-ratio originalne slike da layout ne skoči posle zamene.
+ * Placeholder za sliku — klijent ga mijenja pravim <img> / next/image tagom.
+ * Zadržava aspect-ratio originalne slike da layout ne skoči nakon zamjene.
  */
 function Ph({
   n,
@@ -142,7 +142,7 @@ function Ph({
   style?: React.CSSProperties;
 }) {
   return (
-    <div className={'ph ' + className} style={style} role="img" aria-label={'Image placeholder ' + n}>
+    <div className={'ph ' + className} style={style} role="img" aria-label={'Placeholder za sliku ' + n}>
       <span>IMAGE_PLACEHOLDER_{n}</span>
     </div>
   );
@@ -277,7 +277,7 @@ export default function Home() {
       <button
         type="button"
         className={'burger-button' + (menuOpen ? ' active' : '')}
-        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        aria-label={menuOpen ? 'Zatvori meni' : 'Otvori meni'}
         aria-expanded={menuOpen}
         onClick={() => setMenuOpen((o) => !o)}
       >
@@ -299,7 +299,7 @@ export default function Home() {
 
       {/* Fiksni CTA dole desno — kao na originalu */}
       <a className="btn-signup" href="#booking">
-        Start your trial
+        Započni probni period
       </a>
 
       <main>
@@ -316,14 +316,14 @@ export default function Home() {
         <section className="intro" id="about">
           <div className="intro__inner" data-reveal>
             <h2 className="serif-heading">
-              Strengthen <span className="dot">•</span> Lengthen <span className="dot">•</span>{' '}
-              <span className="font-italic">Transform</span>
+              Ojačaj <span className="dot">•</span> Istegni <span className="dot">•</span>{' '}
+              <span className="font-italic">Transformiši</span>
             </h2>
             <p className="sans-heading intro__lead">
-              {STUDIO_NAME} creates lifelong, transformative results for your body and mind
+              {STUDIO_NAME} stvara trajne, transformativne rezultate za vaše tijelo i um
             </p>
             <a href="#explore" className="btn">
-              Explore
+              Istraži
             </a>
           </div>
         </section>
@@ -334,12 +334,12 @@ export default function Home() {
           <div className="container transform__grid">
             <div className="transform__col transform__col--head" data-reveal>
               <h2 className="serif-heading">
-                The <span className="font-italic">Online</span> Pilates studio to{' '}
-                <span className="upper">transform</span> <span className="font-italic">your body</span> and{' '}
-                <span className="font-italic">mind</span>
+                <span className="font-italic">Online</span> pilates studio koji{' '}
+                <span className="upper">transformiše</span> <span className="font-italic">vaše tijelo</span> i{' '}
+                <span className="font-italic">um</span>
               </h2>
               <a className="btn hide-mobile" href="#booking">
-                Start your trial
+                Započni probni period
               </a>
             </div>
 
@@ -350,7 +350,7 @@ export default function Home() {
                 ))}
               </ul>
               <a className="btn only-mobile" href="#booking">
-                Start your trial
+                Započni probni period
               </a>
             </div>
 
@@ -375,7 +375,7 @@ export default function Home() {
             <div className="features__col features__col--media" data-reveal>
               <Ph n={3} className="features__video" />
               <a href="#classes" className="btn">
-                Explore library
+                Istraži biblioteku
               </a>
             </div>
 
@@ -399,31 +399,31 @@ export default function Home() {
 
             <div className="meet__body">
               <h2 className="sans-heading meet__title" data-reveal>
-                Meet {FOUNDER_NAME}
+                Upoznaj {FOUNDER_NAME}
               </h2>
 
               <div className="meet__text" data-reveal>
                 <div>
                   <p>
-                    I developed this studio as a place to escape the pressures of life and to connect back to your best
-                    self while achieving life changing results on the way.
+                    Ovaj studio sam razvila kao mjesto za bijeg od pritisaka svakodnevice i povratak svom najboljem ja
+                    — uz rezultate koji usput mijenjaju život.
                     <br />
                     <br />
-                    With years of teaching experience, and having taught over 100 different clients, I have learnt what
-                    it is that creates huge change and lasting results in bodies.
+                    S godinama iskustva u podučavanju i preko 100 klijenata iza sebe, naučila sam šta je to što stvara
+                    veliku promjenu i trajne rezultate u tijelu.
                   </p>
                   <a href="#meet" className="btn meet__btn">
-                    About {FOUNDER_NAME}
+                    Više o {FOUNDER_NAME}
                   </a>
                 </div>
                 <div>
                   <p>
-                    My approach to health is about creating incredible yet sustainable results which leave you feeling
-                    empowered on and off the mat.
+                    Moj pristup zdravlju je stvaranje nevjerovatnih, ali održivih rezultata koji vas ostavljaju
+                    osnaženim i na strunjači i van nje.
                     <br />
                     <br />
-                    It never fails to amaze me how amazing our bodies truly are, and with the right workout you can
-                    achieve anything.
+                    Nikada me ne prestane fascinirati koliko su naša tijela zadivljujuća — uz pravi trening možete
+                    postići sve.
                   </p>
                 </div>
               </div>
@@ -438,7 +438,7 @@ export default function Home() {
         {/* ===================================================== TESTIMONIALS == */}
         <section className="testimonials" id="testimonials">
           <h2 className="sans-heading testimonials__title" data-reveal>
-            Client Testimonials
+            Utisci klijenata
           </h2>
 
           <div className="slider" data-reveal>
@@ -446,7 +446,7 @@ export default function Home() {
               type="button"
               className="slider__arrow"
               onClick={() => goTo(slide - 1)}
-              aria-label="Previous testimonial"
+              aria-label="Prethodni utisak"
             >
               <Arrow dir="prev" />
             </button>
@@ -466,7 +466,7 @@ export default function Home() {
               type="button"
               className="slider__arrow"
               onClick={() => goTo(slide + 1)}
-              aria-label="Next testimonial"
+              aria-label="Sljedeći utisak"
             >
               <Arrow dir="next" />
             </button>
@@ -479,14 +479,14 @@ export default function Home() {
                 key={t.name}
                 className={'slider__dot' + (i === slide ? ' is-active' : '')}
                 onClick={() => goTo(i)}
-                aria-label={'Go to testimonial ' + (i + 1)}
+                aria-label={'Idi na utisak ' + (i + 1)}
               />
             ))}
           </div>
 
           <div>
             <a href="#classes" className="btn">
-              Virtual Studio
+              Virtuelni studio
             </a>
           </div>
         </section>
@@ -513,7 +513,7 @@ export default function Home() {
               <Ph n={activeClassData.image} className="classes__media" />
               <p>{activeClassData.text}</p>
               <a href="#booking" className="btn">
-                View schedule
+                Pogledaj raspored
               </a>
             </div>
           </div>
@@ -537,33 +537,32 @@ export default function Home() {
         <section className="booking bg-sand" id="booking">
           <div className="container booking__inner" data-reveal>
             <h2 className="serif-heading">
-              Ready to <span className="font-italic">start?</span>
+              Spremni za <span className="font-italic">početak?</span>
             </h2>
             <p className="booking__lead">
-              Be the first to know about new classes, live sessions and special events. Your 7 day free trial starts
-              here.
+              Saznajte prvi za nove časove, treninge uživo i posebne događaje. Vaših 7 besplatnih dana počinje ovdje.
             </p>
 
             <form className="booking__form" action={EMAIL_SUBMIT_ENDPOINT} method="post" onSubmit={onSubscribe}>
               <label className="visually-hidden" htmlFor="email">
-                Email address
+                Email adresa
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 required
-                placeholder="Your email address"
+                placeholder="Vaša email adresa"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <button type="submit" className="btn btn--solid">
-                Start your trial
+                Započni probni period
               </button>
             </form>
 
             <p className="booking__note" role="status">
-              {sent ? 'Thank you — check your inbox.' : ' '}
+              {sent ? 'Hvala — provjerite svoj inbox.' : ' '}
             </p>
           </div>
         </section>
@@ -583,15 +582,15 @@ export default function Home() {
               </a>
             ))}
             <a href="#booking" className="nav-footer">
-              Privacy
+              Privatnost
             </a>
             <a href="#booking" className="nav-footer">
-              Terms
+              Uslovi korištenja
             </a>
           </nav>
 
           <div className="footer__social">
-            <h3 className="footer__social-title">Follow along</h3>
+            <h3 className="footer__social-title">Pratite nas</h3>
             <div className="footer__icons">
               <a href="#gallery" aria-label="Facebook">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
@@ -624,7 +623,7 @@ export default function Home() {
 
         <div className="footer__copy">
           <p>
-            © Copyright <span>{new Date().getFullYear()}</span> {STUDIO_NAME}. All rights reserved.
+            © <span>{new Date().getFullYear()}</span> {STUDIO_NAME}. Sva prava zadržana.
           </p>
         </div>
       </footer>
@@ -1037,7 +1036,7 @@ ul { margin: 0; padding: 0; }
 
 .testimonials {
   display: grid;
-  /* minmax(0, 1fr) a ne 1fr — inače se kolona raširi na širinu celog slider traka */
+  /* minmax(0, 1fr) a ne 1fr — inače se kolona raširi na širinu cijele trake slidera */
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   text-align: center;
@@ -1164,7 +1163,7 @@ ul { margin: 0; padding: 0; }
 .footer__copy p { font-size: 0.875rem; margin: 0; }
 
 /* ------------------------------------------------------------ utilities -- */
-/* Namerno na kraju fajla: moraju da nadjačaju display iz .btn i sličnih.     */
+/* Namjerno na kraju fajla: moraju da nadjačaju display iz .btn i sličnih.     */
 
 .hide-mobile { display: none; }
 .only-mobile { display: inline-block; }
