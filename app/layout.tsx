@@ -1,29 +1,29 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
-/* Društvene mreže traže apsolutnu, stabilnu putanju do OG slike.
-   NEXT_PUBLIC_SITE_URL ostavlja mogućnost prelaska na vlastiti domen kasnije. */
-const baseUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://solis-reformer-pilates.vercel.app';
+const siteUrl = 'https://solis-reformer-pilates.vercel.app';
+const socialImage = `${siteUrl}/og-solis.jpg`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
-  title: 'Solis Reformer Pilates â€” Banja Luka',
+  metadataBase: new URL(siteUrl),
+  title: 'Solis Reformer Pilates — Banja Luka',
   description:
-    'Reformer pilates studio u Banjoj Luci. Grupni, poluindividualni i individualni treninzi u malim grupama. ZatraÅ¾i probni trening.',
+    'Reformer pilates studio u Banjoj Luci. Grupni, poluindividualni i individualni treninzi u malim grupama. Zatraži probni trening.',
   openGraph: {
-    title: 'ViÅ¡e od vjeÅ¾be â€” to je transformacija',
+    title: 'Zatraži probni trening',
     description:
       'Reformer pilates studio u Banjoj Luci. Grupni, poluindividualni i individualni treninzi u malim grupama.',
+    url: siteUrl,
+    siteName: 'Solis Reformer Pilates',
     locale: 'bs_BA',
     type: 'website',
-    images: [{ url: '/og-solis.jpg', width: 1200, height: 630, alt: 'Solis Reformer Pilates' }],
+    images: [{ url: socialImage, width: 1080, height: 1080, alt: 'Solis Reformer Pilates' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ViÅ¡e od vjeÅ¾be â€” to je transformacija',
-    description: 'Solis Reformer Pilates â€” Banja Luka',
-    images: ['/og-solis.jpg'],
+    title: 'Zatraži probni trening',
+    description: 'Solis Reformer Pilates — Banja Luka',
+    images: [socialImage],
   },
 };
 

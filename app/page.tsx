@@ -15,6 +15,12 @@
    ========================================================================== */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 /* ---------------------------------------------------------------- KONFIG -- */
 
@@ -93,7 +99,7 @@ const TRENINZI = [
     naziv: 'Poluindividualni trening',
     podnaslov: 'Tehnika i preciznost',
     najboljeZa: 'Rad na formi uz partnericu i brži napredak',
-    slika: 'solis-balans',
+    slika: 'solis-poluindividualni',
     opis: 'Ti i još jedna osoba. Pažnja skoro kao na individualnom treningu, uz tempo koji zajedno dogovorite. Fokus je na formi: opterećenje, ugao i disanje se podešavaju za svaku vježbu posebno, pa se greške isprave prije nego uđu u naviku.',
   },
   {
@@ -101,7 +107,7 @@ const TRENINZI = [
     naziv: 'Individualni trening',
     podnaslov: 'Program samo za tebe',
     najboljeZa: 'Prvi susret sa reformerom, povratak nakon pauze ili poroda',
-    slika: 'solis-kampanja-reformer',
+    slika: 'solis-individualni',
     opis: 'Trening skrojen samo za tebe — tempo, fokus i korekcija u svakom pokretu. Program se pravi prema tvom cilju i onome što tvoje tijelo trenutno može, i mijenja se kako napreduješ. Najbolji početak ako nikada nisi bila na reformeru ili se vraćaš nakon duže pauze.',
   },
 ];
@@ -274,6 +280,43 @@ function IkonaInstagram() {
   );
 }
 
+function CustomKursor() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    let frame = 0;
+    const pomjeri = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') {
+        element.style.opacity = '0';
+        return;
+      }
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        element.style.transform = `translate3d(${e.clientX - 4}px, ${e.clientY - 2}px, 0)`;
+        element.style.opacity = '1';
+      });
+    };
+    const sakrij = () => { element.style.opacity = '0'; };
+
+    window.addEventListener('pointermove', pomjeri, { passive: true });
+    document.documentElement.addEventListener('mouseleave', sakrij);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('pointermove', pomjeri);
+      document.documentElement.removeEventListener('mouseleave', sakrij);
+    };
+  }, []);
+
+  return (
+    <div ref={ref} className="custom-kursor" aria-hidden="true">
+      <img src="/cursor-solis-orange-v2.svg" alt="" draggable={false} />
+    </div>
+  );
+}
+
 /* --------------------------------------------------------------- STRANICA -- */
 
 export default function Home() {
@@ -282,9 +325,79 @@ export default function Home() {
   const [utisak, setUtisak] = useState(0);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [poslato, setPoslato] = useState(false);
+  const [aplikacijaAktivna, setAplikacijaAktivna] = useState(false);
   const autoplay = useRef<ReturnType<typeof setInterval> | null>(null);
+  const aplikacijaRef = useRef<HTMLElement>(null);
 
   useScrollReveal();
+
+  useEffect(() => {
+    const lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+    const tick = (time: number) => lenis.raf(time * 1000);
+
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      gsap.ticker.remove(tick);
+      lenis.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    const sekcija = aplikacijaRef.current;
+    if (!sekcija || aplikacijaAktivna) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAplikacijaAktivna(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.08 }
+    );
+
+    observer.observe(sekcija);
+    return () => observer.disconnect();
+  }, [aplikacijaAktivna]);
+
+  useGSAP(
+    () => {
+      if (!aplikacijaAktivna || !aplikacijaRef.current) return;
+
+      const mm = gsap.matchMedia();
+      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+        const ekrani = gsap.utils.toArray<HTMLElement>('.aplikacija__ekran');
+        gsap.set(ekrani, { autoAlpha: 0 });
+        gsap.set(ekrani[0], { autoAlpha: 1 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: aplikacijaRef.current,
+            start: 'top top',
+            end: '+=220%',
+            pin: true,
+            scrub: 0.65,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        ekrani.slice(1).forEach((ekran, i) => {
+          tl.to(ekrani[i], { autoAlpha: 0, duration: 0.22 })
+            .to(ekran, { autoAlpha: 1, duration: 0.22 }, '<')
+            .to({}, { duration: 0.56 });
+        });
+
+        requestAnimationFrame(() => ScrollTrigger.refresh());
+      });
+
+      return () => mm.revert();
+    },
+    { scope: aplikacijaRef, dependencies: [aplikacijaAktivna], revertOnUpdate: true }
+  );
 
   useEffect(() => {
     const zakljucano = menuOpen || lightbox !== null;
@@ -339,6 +452,7 @@ export default function Home() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
+      <CustomKursor />
 
       <span id="pocetna" />
 
@@ -400,7 +514,7 @@ export default function Home() {
       <main>
         {/* ============================================================ 2. HERO */}
         <section className="hero">
-          <Slika ime="solis-studio-panorama" alt="" priority sizes="100vw" className="hero__slika" />
+          <Slika ime="solis-hero-final-v4" alt="" priority sizes="100vw" className="hero__slika" />
           <div className="hero__veo" />
           <div className="hero__sadrzaj">
             {/* logotip nosi h1 — naslov postoji za pretraživače i čitače ekrana,
@@ -557,6 +671,46 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ============================================== 7. SOLIS U TVOM DŽEPU */}
+        <section className="aplikacija" aria-label="Solis aplikacija" ref={aplikacijaRef}>
+          <div className="okvir aplikacija__mreza">
+            <div className="aplikacija__uvod" data-reveal>
+              <h2 className="serif-naslov">
+                Solis pilates studio <span className="kurziv">u tvom džepu</span>
+              </h2>
+              <a className="btn" href="#kontakt">Rezerviši probni</a>
+            </div>
+
+            <ul className="aplikacija__pogodnosti" data-reveal>
+              <li>Rezervacije termina na zahtjev</li>
+              <li>Pregled dostupnih termina</li>
+              <li>Cjenovnik uvijek pri ruci</li>
+              <li>Novi termini svake sedmice</li>
+              <li>Brz kontakt sa studiom</li>
+            </ul>
+
+            <div className="aplikacija__telefon" aria-label="Prikaz Solis mobilne aplikacije">
+              {aplikacijaAktivna && [
+                ['solis-app-splash.webp', 'Početni ekran Solis aplikacije'],
+                ['solis-app-rezervacija.webp', 'Rezervacija termina u Solis aplikaciji'],
+                ['solis-app-cjenovnik.webp', 'Cjenovnik u Solis aplikaciji'],
+                ['solis-app-kontakt.webp', 'Kontakt ekran Solis aplikacije'],
+                ['solis-app-splash.webp', 'ZavrÅ¡ni ekran Solis aplikacije'],
+              ].map(([src, alt], i) => (
+                <img
+                  key={src}
+                  src={'/images/solis-app/' + src}
+                  alt={alt}
+                  className={'aplikacija__ekran aplikacija__ekran--' + (i + 1)}
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ======================================================== 7. CJENOVNIK */}
         <section className="cjenovnik" id="cjenovnik">
           <div className="okvir">
@@ -621,7 +775,7 @@ export default function Home() {
         <section className="galerija" id="galerija">
           <div className="okvir">
             <h2 className="serif-naslov galerija__naslov" data-reveal>
-              Naša <span className="kurziv">lokacija</span>
+              Iz <span className="kurziv">studia</span>
             </h2>
 
             <div className="galerija__mreza">
@@ -878,6 +1032,13 @@ export default function Home() {
 
 const CSS = `
 @font-face {
+  font-family: 'Garamond Nova Condensed v2';
+  src: url('/fonts/GaramondNovaProCondensedLight-v2.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: 'EB Garamond';
   src: url('/fonts/EBGaramond-Regular-latin-ext.woff2') format('woff2');
   font-weight: 400; font-style: normal; font-display: swap;
@@ -924,7 +1085,7 @@ const CSS = `
   --traka-2: #e6d9d1;
   --prigusena: #6f625b;
   --linija: rgba(44, 44, 44, 0.18);
-  --serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --serif: 'Garamond Nova Condensed v2', Georgia, 'Times New Roman', serif;
   --sans: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif;
 }
 
@@ -933,10 +1094,26 @@ const CSS = `
 /* Kursor je emblem iz logotipa u terakoti — blijedi preko stranice, jači nad
    linkovima i dugmadima. Samo na uređajima sa pravim mišem; na telefonu nema
    kursora, a u poljima za unos ostaje standardna crtica da se lako cilja tekst. */
-@media (hover: hover) and (pointer: fine) {
-  body { cursor: url('/cursor-solis.png') 16 16, auto; }
-  a, button, summary, label, [role='button'] { cursor: url('/cursor-solis-aktivan.png') 16 16, pointer; }
-  input, textarea, select { cursor: auto; }
+body, a, button, summary, label, [role='button'] { cursor: none !important; }
+input, textarea, select { cursor: auto; }
+
+.custom-kursor {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  width: 36px;
+  height: 38px;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.custom-kursor img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.75));
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
@@ -1093,7 +1270,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 .nav-linkovi a:hover::after { transform: scaleX(1); }
 
 .zaglavlje__logo { text-align: center; }
-.zaglavlje__logo img { height: 72px; width: auto; margin: 0 auto; }
+.zaglavlje__logo img { height: 44px; width: auto; margin: 0 auto; }
 
 /* --------------------------------------------------------- burger meni -- */
 
@@ -1176,9 +1353,9 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
     linear-gradient(to bottom right, rgba(212, 130, 91, 0.3), rgba(180, 101, 63, 0.22));
 }
 .hero__sadrzaj { position: relative; z-index: 2; color: var(--bijela); }
-.hero__logo { height: 96px; width: auto; margin: 0 auto 2rem; }
-@media (min-width: 768px) { .hero__logo { height: 132px; margin-bottom: 2.5rem; } }
-@media (min-width: 1280px) { .hero__logo { height: 168px; } }
+.hero__logo { height: 78px; width: auto; margin: 0 auto 2rem; }
+@media (min-width: 768px) { .hero__logo { height: 108px; margin-bottom: 2.5rem; } }
+@media (min-width: 1280px) { .hero__logo { height: 132px; } }
 .hero__naslov {
   font-family: var(--serif);
   font-size: clamp(2.3rem, 8vw, 4.2rem);
@@ -1319,16 +1496,24 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 /* --------------------------------------------------------------- zašto -- */
 /* tri kolone: naslov | lista sa „+" | slika */
 
-.zasto { padding: 3rem 0; }
-@media (min-width: 768px) { .zasto { padding: 5rem 0; } }
+.zasto { padding: 5rem 0; }
+@media (min-width: 768px) { .zasto { padding: 8rem 0; } }
+@media (min-width: 1280px) { .zasto { padding: 11rem 0; } }
 .zasto__mreza { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
 @media (min-width: 768px) { .zasto__mreza { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; } }
-@media (min-width: 1024px) { .zasto__mreza { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
+@media (min-width: 1024px) { .zasto__mreza { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0; row-gap: 6rem; } }
 
-@media (min-width: 1024px) { .zasto__uvod { padding-top: 5rem; } }
-.zasto__uvod .serif-naslov { margin-bottom: 2rem; }
-@media (min-width: 1024px) { .zasto__uvod .serif-naslov { max-width: 80%; margin-bottom: 3rem; } }
-@media (min-width: 1024px) { .zasto__lista { padding-top: 4rem; } }
+.zasto__uvod { text-align: center; }
+@media (min-width: 768px) { .zasto__uvod { grid-column: 1 / -1; } }
+.zasto__uvod .serif-naslov {
+  max-width: 15ch;
+  margin: 0 auto 2.5rem;
+  font-size: clamp(2.15rem, 4.2vw, 4.75rem);
+  line-height: 1.02;
+}
+@media (min-width: 1024px) { .zasto__uvod .serif-naslov { margin-bottom: 3.5rem; } }
+@media (min-width: 1024px) { .zasto__lista { align-self: center; } }
+@media (min-width: 1024px) { .zasto__lista { padding: 2rem clamp(3rem, 7vw, 8rem) 2rem 0; } }
 
 .zasto li {
   margin-bottom: 1.5rem;
@@ -1355,8 +1540,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 .zasto__lista ul { margin-bottom: 2rem; }
 
 .zasto__slika { display: flex; align-items: center; }
-@media (min-width: 768px) { .zasto__slika { grid-column: 1 / -1; } }
-@media (min-width: 1024px) { .zasto__slika { grid-column: auto; } }
+@media (min-width: 768px) and (max-width: 1023px) { .zasto__slika { grid-column: 1 / -1; } }
 .zasto__slika img { width: 100%; }
 
 .sakrij-na-mobilnom { display: none; }
@@ -1364,6 +1548,100 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 @media (min-width: 768px) {
   .sakrij-na-mobilnom { display: inline-flex; }
   .samo-mobilni { display: none; }
+}
+
+/* --------------------------------------------------------- aplikacija -- */
+
+.aplikacija {
+  padding: 6rem 0;
+  background: var(--pijesak);
+  overflow: hidden;
+}
+.aplikacija__mreza {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+.aplikacija__uvod { text-align: center; }
+.aplikacija__uvod .serif-naslov {
+  max-width: 12ch;
+  margin: 0 auto 2.75rem;
+  font-size: clamp(2.6rem, 5.4vw, 5.4rem);
+  line-height: 0.98;
+}
+.aplikacija__pogodnosti { display: grid; gap: 0; }
+.aplikacija__pogodnosti li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+  padding: 1.15rem 0;
+  font-family: var(--sans);
+  font-size: clamp(0.86rem, 1.2vw, 1.16rem);
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+.aplikacija__pogodnosti li::before {
+  content: '+';
+  font-size: 2.3rem;
+  font-weight: 200;
+  line-height: 1;
+}
+.aplikacija__telefon {
+  position: relative;
+  width: min(100%, 31rem);
+  aspect-ratio: 4 / 5;
+  margin: 0 auto;
+}
+.aplikacija__ekran {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  visibility: hidden;
+}
+.aplikacija__ekran:first-child { opacity: 1; visibility: visible; }
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .aplikacija__ekran {
+    visibility: visible;
+    animation: solisMobilniEkrani 10s ease-in-out infinite;
+  }
+  .aplikacija__ekran--2 { animation-delay: 2s; }
+  .aplikacija__ekran--3 { animation-delay: 4s; }
+  .aplikacija__ekran--4 { animation-delay: 6s; }
+  .aplikacija__ekran--5 { animation-delay: 8s; }
+}
+
+@keyframes solisMobilniEkrani {
+  0%, 20% { opacity: 1; }
+  25%, 100% { opacity: 0; }
+}
+
+@media (min-width: 1100px) {
+  .aplikacija { min-height: 100svh; padding: 4.5rem 0; }
+  .aplikacija__mreza {
+    min-height: calc(100svh - 9rem);
+    grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1.15fr) minmax(300px, 1.05fr);
+    column-gap: clamp(2rem, 4.5vw, 5.5rem);
+  }
+  .aplikacija__uvod { text-align: left; }
+  .aplikacija__uvod .serif-naslov { margin-left: 0; }
+  .aplikacija__pogodnosti li { padding: 1.4rem 0; }
+}
+
+@media (min-width: 768px) and (max-width: 1099px) {
+  .aplikacija__mreza { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aplikacija__uvod { grid-column: 1 / -1; }
+  .aplikacija__telefon { grid-column: 2; grid-row: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aplikacija__ekran:not(:first-child) { display: none; }
+  .aplikacija__ekran:first-child { opacity: 1; }
 }
 
 /* ----------------------------------------------------------- cjenovnik -- */
