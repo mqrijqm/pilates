@@ -565,7 +565,7 @@ export default function Home() {
               />
               <div className="o-studiju__potpisni">
                 <p className="o-studiju__mini">Ne samo instruktorica, već sportašica cijelog života</p>
-                <img src="/potpis-solis.svg" alt="" className="o-studiju__potpis" />
+                <img src="/lunara-potpis.webp" alt="" className="o-studiju__potpis" />
               </div>
             </div>
 
@@ -691,14 +691,15 @@ export default function Home() {
 
             <div className="aplikacija__telefon" aria-label="Prikaz Solis mobilne aplikacije">
               {aplikacijaAktivna && [
-                ['solis-app-splash.webp', 'Početni ekran Solis aplikacije'],
-                ['solis-app-rezervacija.webp', 'Rezervacija termina u Solis aplikaciji'],
-                ['solis-app-cjenovnik.webp', 'Cjenovnik u Solis aplikaciji'],
-                ['solis-app-kontakt.webp', 'Kontakt ekran Solis aplikacije'],
-                ['solis-app-splash.webp', 'ZavrÅ¡ni ekran Solis aplikacije'],
+                ['lunara-app-splash.webp', 'Početni ekran Lunara aplikacije'],
+                ['lunara-app-rezervacija.webp', 'Rezervacija termina u Lunara aplikaciji'],
+                ['lunara-app-cjenovnik.webp', 'Cjenovnik u Lunara aplikaciji'],
+                ['lunara-app-kontakt.webp', 'Kontakt ekran Lunara aplikacije'],
+                ['lunara-app-splash.webp', 'Završni ekran Lunara aplikacije'],
               ].map(([src, alt], i) => (
                 <img
-                  key={src}
+                  // splash se ponavlja na kraju petlje, pa sam src nije jedinstven ključ
+                  key={i}
                   src={'/images/solis-app/' + src}
                   alt={alt}
                   className={'aplikacija__ekran aplikacija__ekran--' + (i + 1)}
