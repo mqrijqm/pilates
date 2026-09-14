@@ -312,7 +312,7 @@ function CustomKursor() {
 
   return (
     <div ref={ref} className="custom-kursor" aria-hidden="true">
-      <img src="/cursor-solis-orange-v2.svg" alt="" draggable={false} />
+      <img src="/lunara-znak.svg" alt="" draggable={false} />
     </div>
   );
 }
@@ -469,7 +469,7 @@ export default function Home() {
         {/* U zaglavlju stoji samo emblem — puni logotip je odmah ispod, u heroju */}
         <div className="zaglavlje__logo">
           <a href="#pocetna" aria-label={STUDIO}>
-            <img src="/emblem-solis-bijeli.svg" alt="" />
+            <img src="/lunara-znak-bijeli.svg" alt="" />
           </a>
         </div>
 
@@ -497,7 +497,7 @@ export default function Home() {
 
       <div className={'meni' + (menuOpen ? ' is-open' : '')}>
         <a href="#pocetna" className="meni__logo" onClick={() => setMenuOpen(false)}>
-          <img src="/logo-solis-dark.svg" alt={STUDIO} />
+          <img src="/lunara-logo-tamni.svg" alt={STUDIO} />
         </a>
         {NAV_SVE.map((l) => (
           <a key={l.label} href={l.href} className="meni__link" onClick={() => setMenuOpen(false)}>
@@ -521,7 +521,7 @@ export default function Home() {
                 ali se ne vidi dvaput na ekranu */}
             <h1 className="hero__logo-naslov">
               <span className="skriveno">{STUDIO} — Banja Luka</span>
-              <img src="/logo-solis-cream.svg" alt="" className="hero__logo" />
+              <img src="/lunara-logo-krem.svg" alt="" className="hero__logo" />
             </h1>
 
             {/* tanka crta pa tri riječi jedna ispod druge */}
@@ -953,7 +953,7 @@ export default function Home() {
       <footer className="futer">
         <div className="okvir futer__mreza">
           <div className="futer__brend">
-            <img src="/logo-solis-terakota.svg" alt={STUDIO} className="futer__logo" />
+            <img src="/lunara-logo.svg" alt={STUDIO} className="futer__logo" />
           </div>
 
           <nav className="futer__nav">
@@ -1112,6 +1112,7 @@ input, textarea, select { cursor: auto; }
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: contain;
   filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.75));
 }
 
@@ -1304,7 +1305,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 }
 .meni.is-open { opacity: 1; pointer-events: auto; }
 .meni__logo { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); }
-.meni__logo img { height: 56px; width: auto; }
+.meni__logo img { height: 96px; width: auto; }
 .meni__link {
   font-family: var(--sans);
   font-size: 1.2rem;
@@ -1352,9 +1353,11 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
     linear-gradient(to bottom right, rgba(182, 156, 182, 0.3), rgba(136, 110, 137, 0.22));
 }
 .hero__sadrzaj { position: relative; z-index: 2; color: var(--bijela); }
-.hero__logo { height: 78px; width: auto; margin: 0 auto 2rem; }
-@media (min-width: 768px) { .hero__logo { height: 108px; margin-bottom: 2.5rem; } }
-@media (min-width: 1280px) { .hero__logo { height: 132px; } }
+/* Lunara logo je uspravan (znak iznad teksta), pa mu treba više visine
+   nego starom širokom logotipu da bi "Reformer Pilates" ostao čitljiv */
+.hero__logo { height: 150px; width: auto; margin: 0 auto 1.5rem; }
+@media (min-width: 768px) { .hero__logo { height: 210px; margin-bottom: 2rem; } }
+@media (min-width: 1280px) { .hero__logo { height: 260px; } }
 .hero__naslov {
   font-family: var(--serif);
   font-size: clamp(2.3rem, 8vw, 4.2rem);
@@ -1903,7 +1906,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 @media (min-width: 1024px) { .futer { padding: 5rem 0 1.5rem; } }
 .futer__mreza { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
 @media (min-width: 1024px) { .futer__mreza { grid-template-columns: 1.1fr 0.9fr 1fr; gap: 3rem; } }
-.futer__logo { height: 72px; width: auto; }
+.futer__logo { height: 130px; width: auto; }
 .futer__nav { columns: 2; column-gap: 1rem; }
 .futer__nav a {
   display: block; margin-bottom: 0.9rem;
