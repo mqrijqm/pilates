@@ -106,11 +106,12 @@ i promijeni samo `ime`.
 
 | Uloga | Hex | CSS varijabla |
 |---|---|---|
-| Primarna (terakota) | `#D4825B` | `--terakota` |
-| Terakota tamnija (hover) | `#B4653F` | `--terakota-tamna` |
-| Krem (logo, tekst na terakoti) | `#F1E6DC` | `--krem` |
-| Pozadina | `#F5F1EE` | `--pijesak` |
-| Taupe | `#C9ADA0` | `--taupe` |
+| Glavna lila (dugmad, akcenti) | `#B69CB6` | `--terakota`, `--taupe` |
+| Tamna lila (tekst, hover) | `#886E89` | `--terakota-tamna`, `--terakota-tekst` |
+| Svijetla lila (trake u pozadini) | `#E2D9DF` | `--traka-1`, `--traka-2` |
+| Krem pozadina (i krem logo) | `#FDFBF5` | `--pijesak` |
+
+Imena varijabli su ostala `terakota` iz prve verzije — vrijednosti su lila.
 | Tekst | `#2C2C2C` | `--ugalj` |
 | Prigušeni tekst | `#7D6C62` | `--prigusena` |
 

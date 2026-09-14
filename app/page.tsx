@@ -1070,19 +1070,18 @@ const CSS = `
 }
 
 :root {
-  --terakota: #d4825b;
-  --terakota-tamna: #b4653f;
-  /* ista narandžasta, samo dublja — čista terakota na svijetloj podlozi daje
-     kontrast 2.75:1, premalo za sitan tekst; ova nijansa daje 4.98:1 */
-  --terakota-tekst: #a25733;
+  /* imena varijabli su ostala "terakota" da se ne dira sav CSS — boje su lila */
+  --terakota: #b69cb6;
+  --terakota-tamna: #886e89;
+  /* tamna lila za sitan tekst — glavna lila na svijetloj podlozi je preslaba */
+  --terakota-tekst: #886e89;
   --bijela: #ffffff;
-  --pijesak: #f5f1ee;
+  --pijesak: #fdfbf5;
   --ugalj: #2c2c2c;
-  --taupe: #c9ada0;
-  /* svijetli tonovi izvedeni iz taupe boje — za velike trake u pozadini,
-     puna terakota bi na toj površini bila preteška */
-  --traka-1: #eee5df;
-  --traka-2: #e6d9d1;
+  --taupe: #b69cb6;
+  /* svijetla lila za velike trake u pozadini */
+  --traka-1: #e2d9df;
+  --traka-2: #e2d9df;
   --prigusena: #6f625b;
   --linija: rgba(44, 44, 44, 0.18);
   --serif: 'Garamond Nova Condensed v2', Georgia, 'Times New Roman', serif;
@@ -1298,7 +1297,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 
 .meni {
   position: fixed; inset: 0; z-index: 1001;
-  background-color: rgba(238, 229, 223, 0.97);
+  background-color: rgba(226, 217, 223, 0.97);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease;
@@ -1349,8 +1348,8 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 .hero__veo {
   position: absolute; inset: 0;
   background:
-    linear-gradient(to bottom, rgba(38, 22, 14, 0.34) 0%, rgba(38, 22, 14, 0.5) 100%),
-    linear-gradient(to bottom right, rgba(212, 130, 91, 0.3), rgba(180, 101, 63, 0.22));
+    linear-gradient(to bottom, rgba(34, 24, 34, 0.34) 0%, rgba(34, 24, 34, 0.5) 100%),
+    linear-gradient(to bottom right, rgba(182, 156, 182, 0.3), rgba(136, 110, 137, 0.22));
 }
 .hero__sadrzaj { position: relative; z-index: 2; color: var(--bijela); }
 .hero__logo { height: 78px; width: auto; margin: 0 auto 2rem; }
@@ -1897,7 +1896,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 /* bijelo-bež podloga, terakota tekst — nijansa svjetlija od pozadine stranice
    da se futer čita kao zasebna traka ispod terakota kontakt sekcije */
 .futer {
-  background-color: #faf7f4;
+  background-color: var(--pijesak);
   color: var(--terakota);
   padding: 3rem 0 1.5rem;
 }
@@ -1925,13 +1924,13 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
   min-width: 0;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid rgba(212, 130, 91, 0.45);
+  border-bottom: 1px solid rgba(136, 110, 137,0.45);
   color: var(--terakota-tamna);
   font-family: var(--sans);
   font-size: 0.95rem;
   padding: 0.5rem 0.25rem;
 }
-.futer__forma input::placeholder { color: rgba(212, 130, 91, 0.55); }
+.futer__forma input::placeholder { color: rgba(136, 110, 137,0.55); }
 .futer__forma input:focus { outline: none; border-bottom-color: var(--terakota); }
 .futer__status {
   margin: 0.75rem 0 0; min-height: 1.2em;
@@ -1947,7 +1946,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 
 .futer__dno {
   margin-top: 2.5rem; padding-top: 1.25rem;
-  border-top: 1px solid rgba(212, 130, 91, 0.28);
+  border-top: 1px solid rgba(136, 110, 137,0.28);
 }
 .futer__dno p { margin: 0; font-size: 0.78rem; color: var(--terakota-tekst); }
 /* copyright ostaje lijevo — desno ga prekriva fiksno dugme za rezervaciju */
@@ -1957,7 +1956,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 
 .lightbox {
   position: fixed; inset: 0; z-index: 9000;
-  background-color: rgba(28, 18, 14, 0.95);
+  background-color: rgba(30, 22, 30, 0.95);
   display: flex; align-items: center; justify-content: center;
   gap: 0.5rem; padding: 3.5rem 0.75rem;
   animation: lbIn 0.25s ease;
@@ -1966,7 +1965,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 .lightbox__okvir { margin: 0; max-width: min(1100px, 92vw); text-align: center; }
 .lightbox__okvir img { max-height: 78vh; width: auto; margin: 0 auto; }
 .lightbox__okvir figcaption {
-  margin-top: 1rem; font-size: 0.78rem; letter-spacing: 0.1em; color: rgba(245, 241, 238, 0.7);
+  margin-top: 1rem; font-size: 0.78rem; letter-spacing: 0.1em; color: rgba(253, 251, 245, 0.7);
 }
 .lightbox__zatvori {
   position: absolute; top: 1rem; right: 1.25rem;
