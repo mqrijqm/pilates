@@ -1043,6 +1043,9 @@ const CSS = `
   font-weight: 300;
   font-style: normal;
   font-display: swap;
+  /* Demo verzija fonta ima vodeni žig umjesto cifre 4, pa cifre 0–9 ne uzimamo
+     iz njega — browser ih crta sljedećim fontom u --serif (EB Garamond) */
+  unicode-range: U+0000-002F, U+003A-FFFF;
 }
 @font-face {
   font-family: 'EB Garamond';
@@ -1090,7 +1093,7 @@ const CSS = `
   --traka-2: #e2d9df;
   --prigusena: #6f625b;
   --linija: rgba(44, 44, 44, 0.18);
-  --serif: 'Garamond Nova Condensed v2', Georgia, 'Times New Roman', serif;
+  --serif: 'Garamond Nova Condensed v2', 'EB Garamond', Georgia, 'Times New Roman', serif;
   --sans: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif;
 }
 
@@ -1695,7 +1698,10 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
   border-bottom: 1px solid var(--linija);
 }
 .paket__stavke dt { font-size: 0.95rem; color: var(--prigusena); }
-.paket__stavke dd { font-family: var(--serif); font-size: 1.4rem; white-space: nowrap; }
+.paket__stavke dd {
+  font-family: var(--serif); font-size: 1.4rem; white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+}
 
 .cjenovnik__napomena {
   margin-top: 4.5rem;
