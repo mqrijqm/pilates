@@ -181,11 +181,11 @@ const PITANJA = [
 ];
 
 const GALERIJA = [
-  { slika: 'lunara-studio-panorama', alt: 'Sala sa reformer aparatima i lučnim ogledalima' },
+  { slika: 'lunara-poluindividualni', alt: 'Kutak studija sa loptama i prostirkama' },
   { slika: 'lunara-clanice-reformer', alt: 'Dvije članice na treningu' },
   { slika: 'lunara-render', alt: 'Prostor studija' },
   { slika: 'lunara-detalj-pampas', alt: 'Detalj studija — ogledalo i pampas trava' },
-  { slika: 'lunara-balans', alt: 'Trening na reformeru pred ogledalima' },
+  { slika: 'lunara-individualni', alt: 'Reformer pred lučnim ogledalom' },
   { slika: 'lunara-zajednica', alt: 'Članice studija' },
 ];
 
@@ -670,8 +670,8 @@ export default function Home() {
 
             <div className="zasto__slika" data-reveal>
               <Slika
-                ime="lunara-kampanja-duo"
-                alt="Lunara Reformer Pilates — vježbačica u pilates pozi"
+                ime="lunara-balans"
+                alt="Dvije članice na reformerima u studiju Lunara"
                 sizes="(min-width: 1024px) 32vw, 100vw"
               />
             </div>
