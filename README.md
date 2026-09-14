@@ -1,4 +1,7 @@
-# Solis Reformer Pilates — Banja Luka
+# Lunara Reformer Pilates — Banja Luka
+
+> Lunara je **izmišljen brend**. Adresa, email (`.example` domen) i Instagram
+> na sajtu su namjerno nepostojeći.
 
 Next.js (App Router) + TypeScript. **Cijela stranica je u jednom fajlu:** `app/page.tsx`
 — markup, stanje i sav CSS. Bez Tailwinda, bez ijedne biblioteke osim Reacta.
@@ -51,7 +54,7 @@ Najbrža opcija bez backenda: [Formspree](https://formspree.io) ili Vercel serve
 ### Utisci — provjeri prije objave
 
 Prva dva utiska su **stvarni javni komentari** sa Instagram profila studija
-(`@solisreformerbl`), skraćeni na ime i inicijal. Prije nego sajt ode uživo,
+prvobitnog studija, skraćeni na ime i inicijal. Prije nego sajt ode uživo,
 zatraži saglasnost autorki ili ih zamijeni utiscima koje studio prikupi direktno.
 Treći je označen kao placeholder.
 
@@ -61,7 +64,7 @@ Treći je označen kao placeholder.
 
 Preuzeto sa Instagram profila studija i iz materijala koje je klijent poslao:
 
-- **Adresa:** Vojvode Stepe Stepanovića 171F, Banja Luka
+- **Adresa:** Ulica Mjesečeve staze 7, Banja Luka (izmišljena)
 - **Cjenovnik:** sva tri paketa sa tačnim cijenama + napomena „paketi vrijede 31 dan"
 - **Šest razloga** u sekciji „Zašto pilates" — preuzeto sa grafike studija
 - **Citat** „Status: nedostupna… ne diraj me narednih 50 minuta" — objava studija

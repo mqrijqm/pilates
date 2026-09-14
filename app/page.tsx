@@ -1,7 +1,7 @@
 'use client';
 
 /* =============================================================================
-   SOLIS REFORMER PILATES — Banja Luka
+   LUNARA REFORMER PILATES — Banja Luka
    -----------------------------------------------------------------------------
    Raspored sekcija i layout prate strukturu pilateswithharriet.com:
    apsolutni header u tri kolone (linkovi | logo | linkovi), hero preko cijelog
@@ -9,7 +9,8 @@
    listom lijevo i medijem desno, lista sa „+" markerima, kvadratni grid galerije,
    centrirani slider utisaka i futer sa formom.
 
-   Boje, slike, logo i tekst su SOLIS.
+   Boje, slike, logo i tekst su LUNARA — izmišljen brend. Adresa, email i
+   Instagram su namjerno nepostojeći.
 
    ŠTA JOŠ TREBA DOPUNITI: vidi konstantu KONTAKT i [BIO] u sekciji O studiju.
    ========================================================================== */
@@ -24,18 +25,21 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 /* ---------------------------------------------------------------- KONFIG -- */
 
-const STUDIO = 'Solis Reformer Pilates';
+const STUDIO = 'Lunara Reformer Pilates';
 
 /* Tri riječi ispod logotipa u heroju — slažu se jedna ispod druge */
 const TAGLINE = ['Poveži', 'Oblikuj', 'Ojačaj'];
-const INSTAGRAM = 'solisreformerbl';
-const INSTAGRAM_URL = 'https://www.instagram.com/solisreformerbl';
+const INSTAGRAM = 'lunarareformerbl';
+/* Brend je izmišljen, pa link ne vodi na Instagram — tuđi nalog sa istim
+   imenom mogao bi postojati. */
+const INSTAGRAM_URL = '#kontakt';
 
 const KONTAKT = {
-  adresa: 'Vojvode Stepe Stepanovića 171F',
+  adresa: 'Ulica Mjesečeve staze 7',
   grad: 'Banja Luka, Republika Srpska',
   telefon: '[TELEFON]',
-  email: 'solisreformerbl@ba.com',
+  /* .example je rezervisan domen (RFC 2606) — ova adresa ne može postojati */
+  email: 'kontakt@lunara-pilates.example',
   radnoVrijeme: 'Pon–Sub, 06:00–20:00',
 };
 
@@ -46,7 +50,7 @@ const jePrazno = (v: string) => /^\[.*\]$/.test(v.trim());
 /* Dok studio ne poveže svoju aplikaciju za rezervacije, dugmad vode na mejl
    sa već popunjenim predmetom. */
 const REZERVACIJA_LINK =
-  'mailto:' + KONTAKT.email + '?subject=' + encodeURIComponent('Probni trening — Solis');
+  'mailto:' + KONTAKT.email + '?subject=' + encodeURIComponent('Probni trening — Lunara');
 
 const EMAIL_SUBMIT_ENDPOINT = '[EMAIL_SUBMIT_ENDPOINT]';
 
@@ -91,7 +95,7 @@ const TRENINZI = [
     naziv: 'Grupni trening',
     podnaslov: 'Zajednica i dosljednost',
     najboljeZa: 'Zajednicu, redovnu rutinu i najpovoljniji ulazak',
-    slika: 'solis-zajednica',
+    slika: 'lunara-zajednica',
     opis: 'Mala grupa i ista energija — najpristupačniji ulaz u reformer pilates. Instruktorica prolazi kroz salu tokom cijelog treninga i koriguje svaku članicu, bez obzira na nivo iskustva. Aparat se podešava prema tebi, pa u istoj grupi rade i početnice i one koje treniraju godinama.',
   },
   {
@@ -99,7 +103,7 @@ const TRENINZI = [
     naziv: 'Poluindividualni trening',
     podnaslov: 'Tehnika i preciznost',
     najboljeZa: 'Rad na formi uz partnericu i brži napredak',
-    slika: 'solis-poluindividualni',
+    slika: 'lunara-poluindividualni',
     opis: 'Ti i još jedna osoba. Pažnja skoro kao na individualnom treningu, uz tempo koji zajedno dogovorite. Fokus je na formi: opterećenje, ugao i disanje se podešavaju za svaku vježbu posebno, pa se greške isprave prije nego uđu u naviku.',
   },
   {
@@ -107,7 +111,7 @@ const TRENINZI = [
     naziv: 'Individualni trening',
     podnaslov: 'Program samo za tebe',
     najboljeZa: 'Prvi susret sa reformerom, povratak nakon pauze ili poroda',
-    slika: 'solis-individualni',
+    slika: 'lunara-individualni',
     opis: 'Trening skrojen samo za tebe — tempo, fokus i korekcija u svakom pokretu. Program se pravi prema tvom cilju i onome što tvoje tijelo trenutno može, i mijenja se kako napreduješ. Najbolji početak ako nikada nisi bila na reformeru ili se vraćaš nakon duže pauze.',
   },
 ];
@@ -174,12 +178,12 @@ const PITANJA = [
 ];
 
 const GALERIJA = [
-  { slika: 'solis-studio-panorama', alt: 'Sala sa reformer aparatima i lučnim ogledalima' },
-  { slika: 'solis-clanice-reformer', alt: 'Dvije članice na treningu' },
-  { slika: 'solis-render', alt: 'Prostor studija' },
-  { slika: 'solis-detalj-pampas', alt: 'Detalj studija — ogledalo i pampas trava' },
-  { slika: 'solis-balans', alt: 'Trening na reformeru pred ogledalima' },
-  { slika: 'solis-zajednica', alt: 'Članice studija' },
+  { slika: 'lunara-studio-panorama', alt: 'Sala sa reformer aparatima i lučnim ogledalima' },
+  { slika: 'lunara-clanice-reformer', alt: 'Dvije članice na treningu' },
+  { slika: 'lunara-render', alt: 'Prostor studija' },
+  { slika: 'lunara-detalj-pampas', alt: 'Detalj studija — ogledalo i pampas trava' },
+  { slika: 'lunara-balans', alt: 'Trening na reformeru pred ogledalima' },
+  { slika: 'lunara-zajednica', alt: 'Članice studija' },
 ];
 
 /* ------------------------------------------------------ POMOĆNE KOMPONENTE */
@@ -514,7 +518,7 @@ export default function Home() {
       <main>
         {/* ============================================================ 2. HERO */}
         <section className="hero">
-          <Slika ime="solis-hero-final-v4" alt="" priority sizes="100vw" className="hero__slika" />
+          <Slika ime="lunara-hero-final-v4" alt="" priority sizes="100vw" className="hero__slika" />
           <div className="hero__veo" />
           <div className="hero__sadrzaj">
             {/* logotip nosi h1 — naslov postoji za pretraživače i čitače ekrana,
@@ -559,8 +563,8 @@ export default function Home() {
           <div className="okvir o-studiju__mreza">
             <div className="o-studiju__portret" data-reveal>
               <Slika
-                ime="solis-instruktorica"
-                alt="Instruktorica studija Solis Reformer Pilates"
+                ime="lunara-instruktorica"
+                alt="Instruktorica studija Lunara Reformer Pilates"
                 sizes="(min-width: 1024px) 38vw, 100vw"
               />
               <div className="o-studiju__potpisni">
@@ -577,7 +581,7 @@ export default function Home() {
               <div className="o-studiju__tekst" data-reveal>
                 <div>
                   <p>
-                    SOLIS je studio posvećen wellness-u i transformaciji. Sa 5+ godina iskustva u reformer pilatesu,
+                    LUNARA je studio posvećen wellness-u i transformaciji. Sa 5+ godina iskustva u reformer pilatesu,
                     moja misija je da pomognem svakoj ženi da pronađe snagu i fleksibilnost koju ima u sebi.
                   </p>
                   <a href="#treninzi" className="btn o-studiju__btn">
@@ -594,7 +598,7 @@ export default function Home() {
 
               <div className="o-studiju__siroka" data-reveal>
                 <Slika
-                  ime="solis-clanice-reformer"
+                  ime="lunara-clanice-reformer"
                   alt="Članice na treningu u studiju"
                   sizes="(min-width: 1024px) 40vw, 100vw"
                 />
@@ -663,20 +667,20 @@ export default function Home() {
 
             <div className="zasto__slika" data-reveal>
               <Slika
-                ime="solis-kampanja-duo"
-                alt="Solis Reformer Pilates — vježbačica u pilates pozi"
+                ime="lunara-kampanja-duo"
+                alt="Lunara Reformer Pilates — vježbačica u pilates pozi"
                 sizes="(min-width: 1024px) 32vw, 100vw"
               />
             </div>
           </div>
         </section>
 
-        {/* ============================================== 7. SOLIS U TVOM DŽEPU */}
-        <section className="aplikacija" aria-label="Solis aplikacija" ref={aplikacijaRef}>
+        {/* ============================================= 7. LUNARA U TVOM DŽEPU */}
+        <section className="aplikacija" aria-label="Lunara aplikacija" ref={aplikacijaRef}>
           <div className="okvir aplikacija__mreza">
             <div className="aplikacija__uvod" data-reveal>
               <h2 className="serif-naslov">
-                Solis pilates studio <span className="kurziv">u tvom džepu</span>
+                Lunara pilates studio <span className="kurziv">u tvom džepu</span>
               </h2>
               <a className="btn" href="#kontakt">Rezerviši probni</a>
             </div>
@@ -689,7 +693,7 @@ export default function Home() {
               <li>Brz kontakt sa studiom</li>
             </ul>
 
-            <div className="aplikacija__telefon" aria-label="Prikaz Solis mobilne aplikacije">
+            <div className="aplikacija__telefon" aria-label="Prikaz Lunara mobilne aplikacije">
               {aplikacijaAktivna && [
                 ['lunara-app-splash.webp', 'Početni ekran Lunara aplikacije'],
                 ['lunara-app-rezervacija.webp', 'Rezervacija termina u Lunara aplikaciji'],
@@ -700,7 +704,7 @@ export default function Home() {
                 <img
                   // splash se ponavlja na kraju petlje, pa sam src nije jedinstven ključ
                   key={i}
-                  src={'/images/solis-app/' + src}
+                  src={'/images/lunara-app/' + src}
                   alt={alt}
                   className={'aplikacija__ekran aplikacija__ekran--' + (i + 1)}
                   loading="eager"
@@ -752,8 +756,8 @@ export default function Home() {
           <div className="okvir kampanja__mreza">
             <div className="kampanja__slika" data-reveal>
               <Slika
-                ime="solis-kampanja-strunjaca"
-                alt="Solis Reformer Pilates — vježbačica sa strunjačom"
+                ime="lunara-kampanja-strunjaca"
+                alt="Lunara Reformer Pilates — vježbačica sa strunjačom"
                 sizes="(min-width: 768px) 45vw, 100vw"
               />
             </div>
@@ -797,13 +801,13 @@ export default function Home() {
             <div className="uzivo" data-reveal>
               <div className="uzivo__video">
                 <video
-                  src="/video/solis-studio.mp4"
+                  src="/video/lunara-studio.mp4"
                   playsInline
                   muted
                   loop
                   autoPlay
                   preload="metadata"
-                  poster="/images/solis-studio-poster.webp"
+                  poster="/images/lunara-studio-poster.webp"
                   aria-label="Snimak studija"
                 />
               </div>
@@ -1611,7 +1615,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
 @media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
   .aplikacija__ekran {
     visibility: visible;
-    animation: solisMobilniEkrani 10s ease-in-out infinite;
+    animation: lunaraMobilniEkrani 10s ease-in-out infinite;
   }
   .aplikacija__ekran--2 { animation-delay: 2s; }
   .aplikacija__ekran--3 { animation-delay: 4s; }
@@ -1619,7 +1623,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
   .aplikacija__ekran--5 { animation-delay: 8s; }
 }
 
-@keyframes solisMobilniEkrani {
+@keyframes lunaraMobilniEkrani {
   0%, 20% { opacity: 1; }
   25%, 100% { opacity: 0; }
 }
