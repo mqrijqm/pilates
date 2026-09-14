@@ -29,10 +29,9 @@ const STUDIO = 'Lunara Reformer Pilates';
 
 /* Tri riječi ispod logotipa u heroju — slažu se jedna ispod druge */
 const TAGLINE = ['Poveži', 'Oblikuj', 'Ojačaj'];
-const INSTAGRAM = 'lunarareformerbl';
-/* Brend je izmišljen, pa link ne vodi na Instagram — tuđi nalog sa istim
-   imenom mogao bi postojati. */
-const INSTAGRAM_URL = '#kontakt';
+/* Brend je izmišljen, pa Instagram nije link — samo tekst. Tuđi nalog sa
+   istim imenom mogao bi postojati. */
+const INSTAGRAM = 'lunarapilates';
 
 const KONTAKT = {
   adresa: 'Ulica Mjesečeve staze 7',
@@ -146,16 +145,20 @@ const PAKETI = [
   },
 ];
 
-/* NAPOMENA: oba utiska su stvarni javni komentari sa Instagram profila studija.
-   Prije objave zatraži saglasnost autorki.
-
-   Treći utisak namjerno NIJE izmišljen — lažna recenzija sa izmišljenim imenom
-   je obmana kupca. Kad studio prikupi pravi, doda se ovdje kao novi objekat:
-   { tekst: '...', ime: 'Ime P.', detalj: 'Članica 8 mjeseci' }
-   Poruka za prikupljanje utisaka je u README-u. */
+/* Lunara je izmišljen brend, pa su i utisci izmišljeni — ilustrativni tekst
+   sa izmišljenim imenima, ne komentari stvarnih osoba. */
 const UTISCI = [
-  { tekst: 'Predivan prostor, instruktorka još bolja.', ime: 'Anđela V.', detalj: 'Članica' },
-  { tekst: 'Wooow, ovako nešto je trebalo da se desi u Banjoj Luci.', ime: 'Ljiljana S.', detalj: 'Članica' },
+  {
+    tekst: 'Nikad nisam bila na reformeru, a već nakon prvog treninga sam znala da ostajem.',
+    ime: 'Sara M.',
+    detalj: 'Članica 6 mjeseci',
+  },
+  { tekst: 'Prostor je toliko miran da zaboravim na telefon čim uđem.', ime: 'Tea R.', detalj: 'Članica' },
+  {
+    tekst: 'Poslije mjesec dana leđa me više ne bole na poslu. Najbolja odluka ove godine.',
+    ime: 'Mia K.',
+    detalj: 'Članica 3 mjeseca',
+  },
 ];
 
 const PITANJA = [
@@ -813,10 +816,10 @@ export default function Home() {
               </div>
               <div>
                 <p className="uzivo__oznaka">Studio uživo</p>
-                <a className="btn" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+                <p className="uzivo__ig">
                   <IkonaInstagram />
                   <span>@{INSTAGRAM}</span>
-                </a>
+                </p>
               </div>
             </div>
           </div>
@@ -940,9 +943,7 @@ export default function Home() {
               <div>
                 <dt>Instagram</dt>
                 <dd>
-                  <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-                    @{INSTAGRAM}
-                  </a>
+                  @{INSTAGRAM}
                 </dd>
               </div>
               <div>
@@ -985,10 +986,10 @@ export default function Home() {
               {poslato ? 'Hvala — javljamo se uskoro.' : ' '}
             </p>
 
-            <a className="futer__ig" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+            <p className="futer__ig">
               <IkonaInstagram />
               <span>@{INSTAGRAM}</span>
-            </a>
+            </p>
           </div>
         </div>
 
@@ -1738,6 +1739,11 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
   font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--prigusena); margin-bottom: 1rem;
 }
+/* Instagram je samo natpis, ne link — zato nije dugme */
+.uzivo__ig {
+  display: inline-flex; align-items: center; gap: 0.6rem; margin: 0;
+  font-size: 0.85rem; letter-spacing: 0.08em; color: var(--terakota-tekst);
+}
 
 /* -------------------------------------------------------------- utisci -- */
 /* centrirani slider, serif citat */
@@ -1948,9 +1954,7 @@ ul, dl, dd { margin: 0; padding: 0; list-style: none; }
   display: inline-flex; align-items: center; gap: 0.6rem;
   margin-top: 1.25rem; font-size: 0.82rem;
   color: var(--terakota-tekst);
-  transition: opacity 0.3s ease;
 }
-.futer__ig:hover { opacity: 0.65; }
 
 .futer__dno {
   margin-top: 2.5rem; padding-top: 1.25rem;

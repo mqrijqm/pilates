@@ -51,12 +51,10 @@ const posalji = async (e) => {
 
 Najbrža opcija bez backenda: [Formspree](https://formspree.io) ili Vercel serverless ruta.
 
-### Utisci — provjeri prije objave
+### Utisci
 
-Prva dva utiska su **stvarni javni komentari** sa Instagram profila studija
-prvobitnog studija, skraćeni na ime i inicijal. Prije nego sajt ode uživo,
-zatraži saglasnost autorki ili ih zamijeni utiscima koje studio prikupi direktno.
-Treći je označen kao placeholder.
+Sva tri utiska su **izmišljena** — ilustrativni tekst sa izmišljenim imenima,
+kao i ostatak Lunara brenda. Nisu komentari stvarnih osoba.
 
 ---
 

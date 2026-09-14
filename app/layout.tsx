@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
-const siteUrl = 'https://solis-reformer-pilates.vercel.app';
+const siteUrl = 'https://lunara-pilates.vercel.app';
 const socialImage = `${siteUrl}/og-lunara.jpg`;
+
+/* Tekst koji se vidi kad se link podijeli (WhatsApp, Instagram, Messenger...) */
+const shareTitle = 'Postani promjena.';
+const shareDescription = 'Lunara Reformer Pilates — Banja Luka';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -10,19 +14,18 @@ export const metadata: Metadata = {
   description:
     'Reformer pilates studio u Banjoj Luci. Grupni, poluindividualni i individualni treninzi u malim grupama. Zatraži probni trening.',
   openGraph: {
-    title: 'Zatraži probni trening',
-    description:
-      'Reformer pilates studio u Banjoj Luci. Grupni, poluindividualni i individualni treninzi u malim grupama.',
+    title: shareTitle,
+    description: shareDescription,
     url: siteUrl,
     siteName: 'Lunara Reformer Pilates',
     locale: 'bs_BA',
     type: 'website',
-    images: [{ url: socialImage, width: 1080, height: 1080, alt: 'Lunara Reformer Pilates' }],
+    images: [{ url: socialImage, width: 1200, height: 630, alt: 'Lunara Reformer Pilates logo' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Zatraži probni trening',
-    description: 'Lunara Reformer Pilates — Banja Luka',
+    title: shareTitle,
+    description: shareDescription,
     images: [socialImage],
   },
 };
